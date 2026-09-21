@@ -1,6 +1,6 @@
 ---
 marp: true
-math: mathjax
+math: katex
 paginate: true
 size: 16:9
 style: |
@@ -67,6 +67,21 @@ style: |
     gap: 32px;
     align-items: start;
   }
+
+  img.diagram {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 285px;
+  }
+
+  img.diagram-small {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 220px;
+  }
+
 ---
 
 <!-- _class: lead -->
@@ -146,36 +161,6 @@ Al finalizar podremos:
 
 ---
 
-## Ruta
-
-$$
-\boxed{
-\text{proceso}
-\rightarrow
-\text{estado}
-\rightarrow
-\text{transición}
-\rightarrow
-P
-\rightarrow
-P^n
-\rightarrow
-\text{transiente}
-\rightarrow
-\text{estacionario}
-}
-$$
-
-Luego aplicaremos esta ruta a un sistema reparable.
-
-<div class="bridge">
-
-Pregunta guía: **si conozco el estado actual, ¿qué puedo decir sobre los estados futuros?**
-
-</div>
-
----
-
 ## De una variable aleatoria a un proceso
 
 En confiabilidad trabajamos, por ejemplo, con
@@ -197,6 +182,18 @@ donde $X_n$ indica su estado en el paso $n$.
 <div class="callout">
 
 Un proceso estocástico describe una **secuencia de estados aleatorios**, no solamente un único resultado aleatorio.
+
+</div>
+
+---
+
+## Comparación: Variable vs Proceso
+
+<img class="diagram" src="images/variable_aleatoria_vs_proceso_aleatorio.png" alt="Comparación visual entre una variable aleatoria y un proceso aleatorio">
+
+<div class="callout">
+
+Un lanzamiento produce un único valor: el resultado $5$ se transforma en $X=1$. Al repetir el experimento en los pasos $n=0,1,2,\ldots$, obtenemos una secuencia $X_0,X_1,X_2,\ldots$, es decir, una trayectoria del proceso.
 
 </div>
 
@@ -253,6 +250,43 @@ El proceso describe todas las trayectorias posibles. Una trayectoria es solo una
 
 ---
 
+## Ejemplo: Estados en una llamada de voz
+
+Supongamos que observamos una llamada de voz sobre IP (VoIP) cada $20\text{ ms}$. Cada intervalo representa un **paso** del modelo.
+
+En cada paso clasificamos la llamada en uno de dos estados:
+
+- **Silencio**: no se detecta actividad de voz.
+- **Hablando**: se detecta actividad de voz.
+
+Así, transformamos una señal continua en una secuencia discreta:
+
+$$
+0=\text{silencio},
+\qquad
+1=\text{hablando}.
+$$
+
+La secuencia $X_0,X_1,X_2,\ldots$ registra el estado observado en cada paso.
+
+---
+
+## Ejemplo: Estados en una llamada de voz
+
+<img class="diagram" src="images/voz-dtmc.png" alt="Cadena de Markov con los estados silencio y hablando, transiciones p y q y permanencias 1-p y 1-q">
+
+Entre dos observaciones consecutivas:
+
+$$
+0\to0:1-p,\quad 0\to1:p,
+\qquad
+1\to1:1-q,\quad 1\to0:q.
+$$
+
+donde $p$ y $q$ son probabilidades por intervalo. Las flechas curvas indican permanencias o cambios de estado.
+
+---
+
 ## Tiempo y estado
 
 Los procesos se pueden clasificar según dos dimensiones:
@@ -274,13 +308,19 @@ $$
 
 ## ¿Qué significa tiempo discreto?
 
-Una **cadena de Markov en tiempo discreto** se denomina **DTMC**, por *Discrete-Time Markov Chain*.
+Decimos que el tiempo es **discreto** cuando observamos el sistema en instantes separados, llamados pasos, en lugar de seguirlo continuamente.
+
+Al combinar estos pasos con un conjunto discreto de estados y modelar cómo el sistema cambia entre ellos, obtenemos una **cadena de Markov en tiempo discreto**, o **DTMC** (*Discrete-Time Markov Chain*).
 
 Una DTMC observa el sistema en pasos:
 
 $$
 n=0,1,2,\ldots
 $$
+
+---
+
+## ¿Qué significa tiempo discreto?
 
 Por ejemplo:
 
@@ -317,7 +357,7 @@ Ejemplos:
 
 <div class="callout">
 
-Definir correctamente el estado es una decisión de modelación, no solo una cuestión de notación.
+Definir correctamente el estado es una decisión de modelado, no solo una cuestión de notación.
 
 </div>
 
@@ -325,16 +365,20 @@ Definir correctamente el estado es una decisión de modelación, no solo una cue
 
 ## ¿Cuánta información debe contener el estado?
 
-| Situación | Estado razonable |
-|---|---|
-| servidor sin envejecimiento explícito | operativo / fallado |
-| dos servidores idénticos | número de servidores operativos |
-| enlace con calidad persistente | calidad actual |
-| componente cuyo riesgo depende de la edad | condición + edad |
+El estado debe conservar las variables que afectan la próxima transición, pero no toda la historia del sistema.
+
+| Situación | ¿Qué necesitamos conocer? | Estado posible |
+|---|---|---|
+| Un servidor sin envejecimiento | si está funcionando | $X_n\in\{\text{operativo},\text{fallado}\}$ |
+| Dos servidores idénticos | cuántos funcionan | $X_n\in\{0,1,2\}$ |
+| Una fila de espera | cuántos paquetes esperan | $X_n=N_n$ |
+| Un componente con envejecimiento | condición y edad | $X_n=(C_n,A_n)$ |
+
+Por ejemplo, si el riesgo de falla depende de la edad, dos componentes operativos de edades distintas no deberían representarse con el mismo estado.
 
 <div class="warn">
 
-Si el futuro depende de una variable que hemos omitido del estado, el modelo puede dejar de ser Markoviano.
+Si el futuro depende de una variable que omitimos, el modelo puede dejar de ser Markoviano.
 
 </div>
 
@@ -403,7 +447,7 @@ Homogeneidad especifica que **la regla no cambia con el tiempo**.
 
 ---
 
-## Ejemplo guía: un servicio reparable
+## Ejemplo: Servicio reparable - Definición
 
 Observamos un servicio una vez por minuto.
 
@@ -424,25 +468,11 @@ Durante cada minuto:
 
 ---
 
-## Diagrama de estados
+## Ejemplo: Servicio reparable - Diagrama de estados
 
-Las transiciones principales son
+<img class="diagram" src="images/servicio-reparable.png" alt="Cadena de Markov de un servicio reparable con los estados caído y operativo, fallas, reparaciones y permanencias">
 
-$$
-\boxed{0}
-\xrightleftharpoons[p=0.1]{r=0.4}
-\boxed{1}
-$$
-
-pero también es posible permanecer en el mismo estado:
-
-$$
-P(0\to0)=1-r=0.6
-$$
-
-$$
-P(1\to1)=1-p=0.9.
-$$
+Las flechas curvas representan reparación y falla. Las flechas que vuelven al mismo círculo representan permanencia.
 
 <div class="callout">
 
@@ -616,6 +646,14 @@ Así,
 $$
 \boxed{P(X_2=1\mid X_0=0)=0.60}
 $$
+
+---
+
+## Dos caminos
+
+<img class="diagram" src="images/dos-pasos-trayectorias.png" alt="Dos trayectorias de dos pasos desde el estado 0 hasta el estado 1">
+
+Las ramas curvas corresponden a $0\to0\to1$ y $0\to1\to1$. Sus probabilidades se multiplican y luego se suman.
 
 ---
 
@@ -1240,6 +1278,14 @@ La cadena describe estados. El requisito de servicio determina cuáles cuentan c
 
 ---
 
+## Estados útiles
+
+<img class="diagram" src="images/disponibilidad-umbral.png" alt="Cadena de estados caído, degradado y normal con dos umbrales de disponibilidad">
+
+El modelo puede distinguir operación normal, degradación, falla y reparación. El conjunto $\mathcal U$ se elige según el nivel de servicio.
+
+---
+
 ## Dos componentes reparables
 
 Ahora considere dos componentes idénticos.
@@ -1260,6 +1306,14 @@ Por tanto,
 $$
 X_n\in\{0,1,2\}.
 $$
+
+---
+
+## Estados agregados
+
+<img class="diagram" src="images/componentes-reparables.png" alt="Cadena de Markov agregada para dos componentes reparables con estados 0, 1 y 2 componentes operativos">
+
+Cada círculo cuenta componentes operativos. Las transiciones curvas se calculan suponiendo independencia y actualización simultánea.
 
 ---
 
@@ -1659,6 +1713,14 @@ $$
 
 ---
 
+## Trayectoria de retorno
+
+<img class="diagram" src="images/primer-retorno.png" alt="Trayectoria de primer retorno 0, 1, 0 en dos pasos">
+
+Para que $T_0^+=2$, el estado $0$ no puede aparecer en el paso $1$.
+
+---
+
 ## ¿Por qué no usamos $(P^2)_{00}$?
 
 Después de dos pasos:
@@ -1991,6 +2053,14 @@ La siguiente clase reemplazará la matriz de probabilidades P por una matriz gen
 Los conceptos de **estado, transiente y estacionario** permanecerán.
 
 </div>
+
+---
+
+## Vista previa CTMC
+
+<img class="diagram" src="images/birth-death-queue.png" alt="Proceso de estados con tasas de nacimiento lambda y muerte mu">
+
+En una CTMC los cambios pueden ocurrir en cualquier instante. Las etiquetas representan tasas, no probabilidades por intervalo.
 
 ---
 
