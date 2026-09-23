@@ -1167,3 +1167,1142 @@ $$
 }.
 $$
 
+---
+
+## Ejemplo: Servicio reparable - Distribución estacionaria
+
+Siendo $p$ la probabilidad de falla ($1\to0$) y $r$ la probabilidad de recuperación ($0\to1$)
+
+$$
+p=0.1,
+\qquad
+r=0.4,
+$$
+
+se obtiene
+
+$$
+\pi_0=\frac{0.1}{0.1+0.4}=0.2
+$$
+
+y
+
+$$
+\pi_1=\frac{0.4}{0.1+0.4}=0.8.
+$$
+
+Por tanto,
+
+$$
+\boxed{
+\boldsymbol\pi=
+\begin{bmatrix}
+0.2&0.8
+\end{bmatrix}}
+$$
+
+---
+
+## Interpretación
+
+A largo plazo:
+
+- el servicio está caído aproximadamente el $20\%$ de las observaciones.
+- está operativo aproximadamente el $80\%$.
+
+<div class="callout">
+
+La distribución estacionaria no describe una misión sin fallas. Permite fallar, recuperarse y volver a operar repetidamente.
+
+</div>
+
+---
+
+## Transiente vs estacionario
+
+Partiendo caído:
+
+$$
+\boldsymbol\alpha^{(0)}=\begin{bmatrix}
+1&0
+\end{bmatrix}.
+$$
+
+Luego:
+
+$$
+\alpha_1^{(1)}=0.40,
+$$
+
+$$
+\alpha_1^{(2)}=0.60,
+$$
+
+y, después de muchos pasos,
+
+$$
+\alpha_1^{(n)}\longrightarrow0.80.
+$$
+
+<div class="bridge">
+
+El transiente conserva información sobre cómo comenzó el sistema.  
+El estacionario describe su comportamiento a largo plazo.
+
+</div>
+
+---
+
+## ¿Toda distribución estacionaria es un límite?
+
+No necesariamente.
+
+Considere
+
+$$
+P=
+\begin{bmatrix}
+0&1\\
+1&0
+\end{bmatrix}.
+$$
+
+La cadena alterna obligatoriamente:
+
+$$
+0\to1\to0\to1\to\cdots
+$$
+
+Existe una distribución estacionaria:
+
+$$
+\boldsymbol\pi=
+\begin{bmatrix}
+0.5&0.5
+\end{bmatrix},
+$$
+
+pero si comenzamos en $0$, la distribución transiente oscila.
+
+---
+
+## Condiciones de convergencia
+
+Para una cadena finita, dos propiedades importantes son:
+
+**Irreducibilidad**
+
+Desde cualquier estado se puede alcanzar cualquier otro.
+
+**Aperiodicidad**
+
+Una cadena es aperiódica si puede regresar a un estado sin quedar atada a un ciclo fijo. En la cadena alternante anterior, cada retorno ocurre tras $2,4,6,\ldots$ pasos, por lo que su período es $2$.
+
+<div class="callout">
+
+Una cadena finita, irreducible y aperiódica converge hacia una única distribución estacionaria desde cualquier distribución inicial.
+
+</div>
+
+---
+
+## Tres conceptos que no deben confundirse
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Dónde estará en el paso $n$? | $\boldsymbol\alpha^{(n)}$ |
+| ¿Qué distribución se obtiene en el largo plazo? | $\boldsymbol\pi$ |
+| ¿Hacia dónde converge $\boldsymbol\alpha^{(n)}$? | depende de la estructura de la cadena |
+
+<div class="warn">
+
+Estacionario e infinito no son sinónimos. Primero se define la distribución estacionaria. Después se estudia si el transiente converge hacia ella.
+
+</div>
+
+---
+
+## Disponibilidad del servicio
+
+Sea
+
+$$
+\mathcal U
+$$
+
+el conjunto de estados que cumplen el nivel de servicio requerido.
+
+Entonces la disponibilidad en el paso $n$ es
+
+$$
+\boxed{
+A_n=\sum_{i\in\mathcal U}\alpha_i^{(n)}
+}.
+$$
+
+Si existe régimen estacionario:
+
+$$
+\boxed{
+A_\infty=\sum_{i\in\mathcal U}\pi_i
+}.
+$$
+
+---
+
+## Ejemplo: Servicio reparable - Disponibilidad del servicio
+
+En nuestro ejemplo,
+
+$$
+\mathcal U=\{1\}.
+$$
+
+Si comienza caído:
+
+$$
+A_1=0.40,
+$$
+
+$$
+A_2=0.60.
+$$
+
+A largo plazo:
+
+$$
+\boxed{A_\infty=\pi_1=0.80}.
+$$
+
+<div class="callout">
+
+La disponibilidad depende de qué estados consideramos aceptables para prestar el servicio.
+
+</div>
+
+---
+
+## Estados intermedios
+
+Suponga ahora tres estados:
+
+$$
+0=\text{caído},
+\qquad
+1=\text{degradado},
+\qquad
+2=\text{normal}.
+$$
+
+El SLA (acuerdo de nivel de servicio) establece el nivel de funcionamiento que se considera aceptable.
+
+Si el SLA acepta operación degradada:
+
+$$
+\mathcal U=\{1,2\}.
+$$
+
+Si exige capacidad completa:
+
+$$
+\mathcal U=\{2\}.
+$$
+
+<div class="bridge">
+
+La cadena describe estados. El requisito de servicio determina cuáles cuentan como disponibles.
+
+</div>
+
+---
+
+## Estados útiles
+
+<img class="diagram" src="images/disponibilidad-umbral.png" alt="Cadena de estados caído, degradado y normal con dos umbrales de disponibilidad">
+
+El modelo puede distinguir operación normal, degradación, falla y reparación. El conjunto $\mathcal U$ se elige según el nivel de servicio.
+
+---
+
+## Ejemplo: servidor reparable
+
+Modelamos el servidor en intervalos fijos. Sus estados son
+
+$$
+0=O=\text{operativo},\qquad
+1=F=\text{fallado},\qquad
+2=R=\text{en reparación}.
+$$
+
+La hipótesis Markoviana dice que la probabilidad del próximo estado depende del estado presente. Las probabilidades se interpretan para cada intervalo.
+
+En el orden $O,F,R$, usamos la matriz
+
+$$
+P=\begin{bmatrix}
+0.9 & 0.1 & 0 \\
+0 & 0 & 1 \\
+0.4 & 0 & 0.6
+\end{bmatrix}.
+$$
+
+El servidor operativo falla con probabilidad $0.1$. Si está fallado, pasa a reparación en el siguiente intervalo. En reparación, vuelve a operar con probabilidad $0.4$.
+
+---
+
+## Ejemplo: Servidor reparable - Disponibilidad estacionaria
+
+Como vector fila y en el orden $O,F,R$, la distribución estacionaria satisface
+
+$$
+\boldsymbol\pi=\boldsymbol\pi P,
+\qquad
+\pi_O+\pi_F+\pi_R=1.
+$$
+
+Al resolver,
+
+$$
+\boldsymbol\pi \approx [0.741,0.074,0.185].
+$$
+
+---
+
+## Ejemplo: Servidor reparable - Disponibilidad estacionaria
+
+Si el acuerdo de nivel de servicio exige que el servidor esté operativo,
+
+$$
+\mathcal U=\{0\},
+\qquad
+A_\infty=\pi_0 \approx 0.741.
+$$
+
+Los estados fallado y en reparación cuentan como no disponibles para este acuerdo de nivel de servicio.
+
+---
+
+## Dos componentes reparables
+
+Ahora considere dos componentes idénticos.
+
+Cada minuto:
+
+- un componente operativo falla con probabilidad $p$.
+- un componente fallado se repara con probabilidad $r$.
+
+En lugar de representar cada configuración por separado, definimos
+
+$$
+X_n=\text{número de componentes operativos}.
+$$
+
+Por tanto,
+
+$$
+X_n\in\{0,1,2\}.
+$$
+
+---
+
+## Estados agregados
+
+<img class="diagram" src="images/componentes-reparables.png" alt="Cadena de Markov agregada para dos componentes reparables con estados 0, 1 y 2 componentes operativos">
+
+Cada círculo cuenta componentes operativos. Las transiciones curvas se calculan suponiendo independencia y actualización simultánea.
+
+---
+
+## ¿Por qué basta contar componentes?
+
+Las configuraciones físicas son:
+
+| Componentes | Estado agregado |
+|---|---|
+| $(0,0)$ | $0$ |
+| $(1,0)$ o $(0,1)$ | $1$ |
+| $(1,1)$ | $2$ |
+
+Podemos agrupar $(1,0)$ y $(0,1)$ porque:
+
+- los componentes son idénticos.
+- tienen las mismas probabilidades $p$ y $r$.
+- el servicio depende solamente de cuántos están operativos.
+
+---
+
+## Supuestos de actualización
+
+Durante un intervalo:
+
+- cada componente operativo puede fallar.
+- cada componente fallado puede repararse.
+- los eventos son independientes entre componentes.
+- observamos el nuevo estado al final del intervalo.
+
+<div class="warn">
+
+Las cantidades p y r son **probabilidades por intervalo**, no tasas de tiempo continuo.
+
+</div>
+
+---
+
+## Transiciones desde el estado 2
+
+Si ambos componentes están operativos:
+
+$$
+P(2\to2)=(1-p)^2
+$$
+
+$$
+P(2\to1)=2p(1-p)
+$$
+
+$$
+P(2\to0)=p^2.
+$$
+
+El factor $2$ aparece porque cualquiera de los dos componentes puede ser el que falle.
+
+---
+
+## Transiciones desde el estado 0
+
+Si ambos componentes están fallados:
+
+$$
+P(0\to0)=(1-r)^2
+$$
+
+$$
+P(0\to1)=2r(1-r)
+$$
+
+$$
+P(0\to2)=r^2.
+$$
+
+Ahora el factor $2$ cuenta cuál de los dos componentes es reparado.
+
+---
+
+## Transiciones desde el estado 1
+
+Hay un componente operativo y uno fallado.
+
+Para terminar con cero operativos:
+
+$$
+P(1\to0)=p(1-r).
+$$
+
+Para terminar con dos:
+
+$$
+P(1\to2)=(1-p)r.
+$$
+
+---
+
+## Permanecer en el estado 1
+
+Existen **dos formas** de continuar con un componente operativo.
+
+Nada cambia:
+
+$$
+(1-p)(1-r).
+$$
+
+O el operativo falla mientras el otro se repara:
+
+$$
+pr.
+$$
+
+Por tanto,
+
+$$
+\boxed{
+P(1\to1)
+=
+(1-p)(1-r)+pr
+}
+$$
+
+<div class="callout">
+
+Un mismo estado final puede obtenerse mediante varios eventos distintos.
+
+</div>
+
+---
+
+<!-- _class: compact -->
+
+## Matriz del sistema reparable
+
+Con el orden
+
+$$
+(0,1,2),
+$$
+
+la matriz es
+
+$$
+P=
+\begin{bmatrix}
+(1-r)^2&2r(1-r)&r^2\\
+p(1-r)&(1-p)(1-r)+pr&(1-p)r\\
+p^2&2p(1-p)&(1-p)^2
+\end{bmatrix}.
+$$
+
+Cada fila describe todas las posibilidades partiendo desde un número determinado de componentes operativos.
+
+---
+
+## Ejemplo numérico
+
+Utilicemos nuevamente
+
+$$
+p=0.1,
+\qquad
+r=0.4.
+$$
+
+Entonces:
+
+$$
+P=
+\begin{bmatrix}
+0.36&0.48&0.16\\
+0.06&0.58&0.36\\
+0.01&0.18&0.81
+\end{bmatrix}.
+$$
+
+Verificación:
+
+$$
+\sum_jp_{ij}=1
+$$
+
+para cada fila.
+
+---
+
+## Régimen estacionario
+
+Resolviendo
+
+$$
+\boldsymbol\pi=\boldsymbol\pi P
+$$
+
+con
+
+$$
+\pi_0+\pi_1+\pi_2=1,
+$$
+
+se obtiene
+
+$$
+\boxed{
+\boldsymbol\pi=
+\begin{bmatrix}
+0.04&0.32&0.64
+\end{bmatrix}
+}.
+$$
+
+---
+
+## ¿Qué significa ese resultado?
+
+A largo plazo:
+
+$$
+P(X=0)=0.04,
+$$
+
+$$
+P(X=1)=0.32,
+$$
+
+$$
+P(X=2)=0.64.
+$$
+
+Si basta **al menos un componente operativo**:
+
+$$
+A_\infty=\pi_1+\pi_2
+=0.32+0.64
+=\boxed{0.96}.
+$$
+
+---
+
+## El mismo sistema, dos niveles de servicio
+
+Si se requiere al menos un componente:
+
+$$
+\mathcal U=\{1,2\}
+$$
+
+y
+
+$$
+A_\infty=0.96.
+$$
+
+Si se exige capacidad completa:
+
+$$
+\mathcal U=\{2\}
+$$
+
+y
+
+$$
+A_\infty=0.64.
+$$
+
+<div class="callout">
+
+La cadena es la misma. Lo que cambia es la definición de servicio aceptable.
+
+</div>
+
+---
+
+## ¿Qué agregó Markov respecto del RBD?
+
+El RBD responde:
+
+> ¿Qué componentes deben sobrevivir durante una misión?
+
+La DTMC permite además:
+
+- fallar.
+- repararse.
+- visitar estados degradados.
+- volver a operar.
+- calcular probabilidades en instantes futuros.
+- estudiar el régimen de largo plazo.
+
+<div class="bridge">
+
+Confiabilidad y disponibilidad son preguntas diferentes porque permiten historias temporales diferentes.
+
+</div>
+
+---
+
+## Una nueva pregunta
+
+Sabemos calcular
+
+$$
+p_{ij}^{(n)}
+=
+P(X_n=j\mid X_0=i).
+$$
+
+Pero esta probabilidad permite que el sistema haya visitado $j$ antes.
+
+A veces queremos preguntar:
+
+> ¿Cuál es la probabilidad de llegar al estado $j$ **por primera vez** exactamente en el paso $n$?
+
+---
+
+## Tiempo de primera visita
+
+Definimos
+
+$$
+T_j=
+\min\{n\geq1:X_n=j\}.
+$$
+
+La probabilidad de primera visita es
+
+$$
+\boxed{
+f_{ij}^{(n)}
+=
+P(T_j=n\mid X_0=i)
+}.
+$$
+
+En general, estas probabilidades no coinciden.
+
+$$
+f_{ij}^{(n)}\neq p_{ij}^{(n)}.
+$$
+
+<div class="warn">
+
+La matriz de n pasos incluye trayectorias que pudieron visitar el estado j anteriormente.
+
+</div>
+
+---
+
+## Primer retorno
+
+Si comenzamos en el mismo estado al que queremos volver:
+
+$$
+X_0=i,
+$$
+
+definimos
+
+$$
+T_i^+
+=
+\min\{n\geq1:X_n=i\}.
+$$
+
+El símbolo $+$ indica que el estado inicial en $n=0$ **no cuenta como retorno**.
+
+---
+
+## Ejemplo de primer retorno
+
+Volvamos al servicio de dos estados:
+
+$$
+0=\text{caído},
+\qquad
+1=\text{operativo}.
+$$
+
+Para regresar **por primera vez** a $0$ en el paso $2$, la trayectoria debe ser:
+
+$$
+0\to1\to0.
+$$
+
+Por tanto,
+
+$$
+P(T_0^+=2\mid X_0=0)
+=
+rp.
+$$
+
+Con $r=0.4$ y $p=0.1$:
+
+$$
+\boxed{0.04}.
+$$
+
+---
+
+## Trayectoria de retorno
+
+<img class="diagram" src="images/primer-retorno.png" alt="Trayectoria de primer retorno 0, 1, 0 en dos pasos">
+
+Para que $T_0^+=2$, el estado $0$ no puede aparecer en el paso $1$.
+
+---
+
+## ¿Por qué no usamos $(P^2)_{00}$?
+
+Después de dos pasos:
+
+$$
+(P^2)_{00}=0.40.
+$$
+
+Ese valor incluye, entre otras, la trayectoria
+
+$$
+0\to0\to0.
+$$
+
+Pero esa trayectoria ya regresó a $0$ en el paso $1$.
+
+<div class="callout">
+
+La potencia n de la matriz P responde **dónde estamos**.  
+El primer retorno agrega la condición **sin haber regresado antes**.
+
+</div>
+
+---
+
+## Primer retorno en el paso 3
+
+Para volver por primera vez a $0$ en el paso $3$, debemos seguir
+
+$$
+0\to1\to1\to0.
+$$
+
+Por tanto,
+
+$$
+P(T_0^+=3\mid X_0=0)
+=
+r(1-p)p.
+$$
+
+Con
+
+$$
+r=0.4,\qquad p=0.1,
+$$
+
+se obtiene
+
+$$
+\boxed{0.036}.
+$$
+
+---
+
+<!-- _class: compact -->
+
+## Extensión: recurrencia de primera visita
+
+Las probabilidades de varios pasos pueden descomponerse según el instante de la primera llegada a $j$:
+
+$$
+p_{ij}^{(n)}
+=
+\sum_{k=1}^{n}
+f_{ij}^{(k)}
+p_{jj}^{(n-k)},
+\qquad
+p_{jj}^{(0)}=1.
+$$
+
+Por tanto,
+
+$$
+f_{ij}^{(n)}
+=
+p_{ij}^{(n)}
+-
+\sum_{k=1}^{n-1}
+f_{ij}^{(k)}
+p_{jj}^{(n-k)}.
+$$
+
+<div class="bridge">
+
+La idea es restar las trayectorias que llegaron antes al estado j.
+
+</div>
+
+---
+
+## Errores frecuentes
+
+| Error | Qué ocurrió |
+|---|---|
+| las columnas suman $1$ | se mezclaron convenciones de vectores fila y columna |
+| falta $p_{ii}$ | se olvidó la posibilidad de permanecer en el estado |
+| interpretar $P^n$ como primera visita | se permiten visitas anteriores |
+| resolver $P\pi=\pi$ | aquí usamos $\pi$ como vector fila |
+| llamar estacionario a $\alpha^{(n)}$ | se confundió un instante finito con el régimen estacionario |
+| usar $p$ como si fuera una tasa | $p$ es una probabilidad asociada a un intervalo |
+
+---
+
+## Ejercicio integrado
+
+Un enlace se observa cada minuto y puede estar:
+
+$$
+0=\text{malo},
+\qquad
+1=\text{bueno}.
+$$
+
+Si está malo, mejora con probabilidad $0.4$.
+
+Si está bueno, empeora con probabilidad $0.1$.
+
+1. Construya el diagrama y la matriz $P$.
+2. Si parte malo, calcule la probabilidad de estar bueno después de dos minutos.
+3. Obtenga la distribución estacionaria.
+4. Interprete $\pi_1$.
+5. Calcule la probabilidad de regresar por primera vez al estado malo en el paso $2$.
+
+---
+
+## Solución: modelo
+
+Con el orden $(0,1)$:
+
+$$
+P=
+\begin{bmatrix}
+0.6&0.4\\
+0.1&0.9
+\end{bmatrix}.
+$$
+
+Cada fila suma $1$.
+
+La primera fila describe qué ocurre partiendo desde estado malo.
+
+La segunda describe qué ocurre partiendo desde estado bueno.
+
+---
+
+## Solución: dos pasos
+
+Calculamos
+
+$$
+P^2=
+\begin{bmatrix}
+0.40&0.60\\
+0.15&0.85
+\end{bmatrix}.
+$$
+
+Como parte malo:
+
+$$
+\boldsymbol\alpha^{(0)}
+=
+\begin{bmatrix}
+1&0
+\end{bmatrix}.
+$$
+
+Entonces:
+
+$$
+\boldsymbol\alpha^{(2)}
+=
+\begin{bmatrix}
+0.40&0.60
+\end{bmatrix}.
+$$
+
+La probabilidad solicitada es
+
+$$
+\boxed{0.60}.
+$$
+
+---
+
+## Solución: largo plazo
+
+El balance es
+
+$$
+0.4\pi_0=0.1\pi_1
+$$
+
+con
+
+$$
+\pi_0+\pi_1=1.
+$$
+
+Por tanto,
+
+$$
+\boxed{
+\boldsymbol\pi=
+\begin{bmatrix}
+0.2&0.8
+\end{bmatrix}}
+$$
+
+y el enlace permanece en estado bueno aproximadamente el
+
+$$
+\boxed{80\%}
+$$
+
+de las observaciones de largo plazo.
+
+---
+
+## Solución: primer retorno
+
+Para regresar por primera vez al estado malo en el paso $2$:
+
+$$
+0\to1\to0.
+$$
+
+Por tanto,
+
+$$
+P(T_0^+=2\mid X_0=0)
+=
+(0.4)(0.1)
+=
+\boxed{0.04}.
+$$
+
+No incluimos
+
+$$
+0\to0\to0
+$$
+
+porque ya regresó al estado $0$ en el primer paso.
+
+---
+
+<!-- _class: compact -->
+
+## Actividad
+
+Cada segundo, una tarjeta reporta:
+
+$$
+0=\text{pobre},\quad
+1=\text{regular},\quad
+2=\text{buena},\quad
+3=\text{excelente}.
+$$
+
+Las transiciones son:
+
+- desde $0$: $0.50$ a $0$ y $0.50$ a $1$.
+- desde $1$: $0.04$ a $0$, $0.90$ a $1$ y $0.06$ a $2$.
+- desde $2$: $0.04$ a $0$, $0.90$ a $2$ y $0.06$ a $3$.
+- desde $3$: $(0.04,0.02,0.04,0.90)$.
+
+Construya $P$ y verifique el modelo.
+
+---
+
+<!-- _class: compact -->
+
+## Solución de la actividad
+
+Con el orden $(0,1,2,3)$:
+
+$$
+P=
+\begin{bmatrix}
+0.50&0.50&0&0\\
+0.04&0.90&0.06&0\\
+0.04&0&0.90&0.06\\
+0.04&0.02&0.04&0.90
+\end{bmatrix}.
+$$
+
+Las cuatro filas suman $1$.
+
+Las entradas diagonales representan la probabilidad de mantener la misma calidad durante el siguiente segundo.
+
+---
+
+## Qué debemos poder hacer ahora
+
+Ante una DTMC:
+
+1. definir qué significa cada estado.
+2. fijar qué representa un paso.
+3. construir y verificar $P$.
+4. usar $P^n$ para probabilidades futuras.
+5. usar $\boldsymbol\alpha^{(0)}P^n$ para el transiente.
+6. resolver $\boldsymbol\pi=\boldsymbol\pi P$ para el régimen estacionario.
+7. sumar estados aceptables para obtener disponibilidad.
+8. distinguir $P^n$ de una probabilidad de primera visita.
+
+---
+
+## De tiempo discreto a tiempo continuo
+
+En esta clase:
+
+> durante cada intervalo ocurre una transición con cierta **probabilidad**.
+
+Pero las fallas y reparaciones reales pueden ocurrir en cualquier instante.
+
+En tiempo continuo aparecerán **tasas**:
+
+$$
+0
+\xrightleftharpoons[\mu]{\lambda}
+1.
+$$
+
+<div class="bridge">
+
+La siguiente clase reemplazará la matriz de probabilidades P por una matriz generadora Q.
+
+Los conceptos de **estado, transiente y estacionario** permanecerán.
+
+</div>
+
+---
+
+## Vista previa CTMC
+
+<img class="diagram" src="images/birth-death-queue.png" alt="Proceso de estados con tasas de nacimiento lambda y muerte mu">
+
+En una CTMC los cambios pueden ocurrir en cualquier instante. Las etiquetas representan tasas, no probabilidades por intervalo.
+
+---
+
+## La conexión con el resto del curso
+
+Hasta ahora:
+
+$$
+\text{distribuciones}
+\rightarrow
+R_i(t)
+\rightarrow
+R_{\text{sistema}}(t)
+$$
+
+Ahora:
+
+$$
+\text{estados}
+\rightarrow
+\text{transiciones}
+\rightarrow
+\text{evolución temporal}
+$$
+
+Luego:
+
+$$
+\text{CTMC}
+\rightarrow
+\text{fallas + reparaciones}
+\rightarrow
+\text{disponibilidad}.
+$$
+
+<div class="callout">
+
+Pasamos de preguntar **si una misión sobrevive** a preguntar **cómo se comporta un sistema que puede fallar y recuperarse repetidamente**.
+
+</div>
+
+---
+
+## Referencias
+
+- K. S. Trivedi y A. Bobbio, *Reliability and Availability Engineering: Modeling, Analysis, and Applications*, Cambridge University Press, 2017, caps. 7 y 8.
+- W. J. Stewart, *Probability, Markov Chains, Queues, and Simulation*, Princeton University Press, 2009, caps. 3 y 5.
+- J. M. Martínez, *TEL211: Stochastic Processes*, material histórico USM.
+- Certámenes TEL211 2022 y 2023, problemas de cadenas de Markov en tiempo discreto.
