@@ -1511,3 +1511,296 @@ $$
 
 Cada círculo cuenta componentes operativos. Las transiciones curvas se calculan suponiendo independencia y actualización simultánea.
 
+---
+
+## ¿Por qué basta contar componentes?
+
+Las configuraciones físicas son:
+
+| Componentes | Estado agregado |
+|---|---|
+| $(0,0)$ | $0$ |
+| $(1,0)$ o $(0,1)$ | $1$ |
+| $(1,1)$ | $2$ |
+
+Podemos agrupar $(1,0)$ y $(0,1)$ porque:
+
+- los componentes son idénticos.
+- tienen las mismas probabilidades $p$ y $r$.
+- el servicio depende solamente de cuántos están operativos.
+
+---
+
+## Supuestos de actualización
+
+Durante un intervalo:
+
+- cada componente operativo puede fallar.
+- cada componente fallado puede repararse.
+- los eventos son independientes entre componentes.
+- observamos el nuevo estado al final del intervalo.
+
+<div class="warn">
+
+Las cantidades p y r son **probabilidades por intervalo**, no tasas de tiempo continuo.
+
+</div>
+
+---
+
+## Transiciones desde el estado 2
+
+Si ambos componentes están operativos:
+
+$$
+P(2\to2)=(1-p)^2
+$$
+
+$$
+P(2\to1)=2p(1-p)
+$$
+
+$$
+P(2\to0)=p^2.
+$$
+
+El factor $2$ aparece porque cualquiera de los dos componentes puede ser el que falle.
+
+---
+
+## Transiciones desde el estado 0
+
+Si ambos componentes están fallados:
+
+$$
+P(0\to0)=(1-r)^2
+$$
+
+$$
+P(0\to1)=2r(1-r)
+$$
+
+$$
+P(0\to2)=r^2.
+$$
+
+Ahora el factor $2$ cuenta cuál de los dos componentes es reparado.
+
+---
+
+## Transiciones desde el estado 1
+
+Hay un componente operativo y uno fallado.
+
+Para terminar con cero operativos:
+
+$$
+P(1\to0)=p(1-r).
+$$
+
+Para terminar con dos:
+
+$$
+P(1\to2)=(1-p)r.
+$$
+
+---
+
+## Permanecer en el estado 1
+
+Existen **dos formas** de continuar con un componente operativo.
+
+Nada cambia:
+
+$$
+(1-p)(1-r).
+$$
+
+O el operativo falla mientras el otro se repara:
+
+$$
+pr.
+$$
+
+Por tanto,
+
+$$
+\boxed{
+P(1\to1)
+=
+(1-p)(1-r)+pr
+}
+$$
+
+<div class="callout">
+
+Un mismo estado final puede obtenerse mediante varios eventos distintos.
+
+</div>
+
+---
+
+<!-- _class: compact -->
+
+## Matriz del sistema reparable
+
+Con el orden
+
+$$
+(0,1,2),
+$$
+
+la matriz es
+
+$$
+P=
+\begin{bmatrix}
+(1-r)^2&2r(1-r)&r^2\\
+p(1-r)&(1-p)(1-r)+pr&(1-p)r\\
+p^2&2p(1-p)&(1-p)^2
+\end{bmatrix}.
+$$
+
+Cada fila describe todas las posibilidades partiendo desde un número determinado de componentes operativos.
+
+---
+
+## Ejemplo numérico
+
+Utilicemos nuevamente
+
+$$
+p=0.1,
+\qquad
+r=0.4.
+$$
+
+Entonces:
+
+$$
+P=
+\begin{bmatrix}
+0.36&0.48&0.16\\
+0.06&0.58&0.36\\
+0.01&0.18&0.81
+\end{bmatrix}.
+$$
+
+Verificación:
+
+$$
+\sum_jp_{ij}=1
+$$
+
+para cada fila.
+
+---
+
+## Régimen estacionario
+
+Resolviendo
+
+$$
+\boldsymbol\pi=\boldsymbol\pi P
+$$
+
+con
+
+$$
+\pi_0+\pi_1+\pi_2=1,
+$$
+
+se obtiene
+
+$$
+\boxed{
+\boldsymbol\pi=
+\begin{bmatrix}
+0.04&0.32&0.64
+\end{bmatrix}
+}.
+$$
+
+---
+
+## ¿Qué significa ese resultado?
+
+A largo plazo:
+
+$$
+P(X=0)=0.04,
+$$
+
+$$
+P(X=1)=0.32,
+$$
+
+$$
+P(X=2)=0.64.
+$$
+
+Si basta **al menos un componente operativo**:
+
+$$
+A_\infty=\pi_1+\pi_2
+=0.32+0.64
+=\boxed{0.96}.
+$$
+
+---
+
+## El mismo sistema, dos niveles de servicio
+
+Si se requiere al menos un componente:
+
+$$
+\mathcal U=\{1,2\}
+$$
+
+y
+
+$$
+A_\infty=0.96.
+$$
+
+Si se exige capacidad completa:
+
+$$
+\mathcal U=\{2\}
+$$
+
+y
+
+$$
+A_\infty=0.64.
+$$
+
+<div class="callout">
+
+La cadena es la misma. Lo que cambia es la definición de servicio aceptable.
+
+</div>
+
+---
+
+## ¿Qué agregó Markov respecto del RBD?
+
+El RBD responde:
+
+> ¿Qué componentes deben sobrevivir durante una misión?
+
+La DTMC permite además:
+
+- fallar.
+- repararse.
+- visitar estados degradados.
+- volver a operar.
+- calcular probabilidades en instantes futuros.
+- estudiar el régimen de largo plazo.
+
+<div class="bridge">
+
+Confiabilidad y disponibilidad son preguntas diferentes porque permiten historias temporales diferentes.
+
+</div>
+
