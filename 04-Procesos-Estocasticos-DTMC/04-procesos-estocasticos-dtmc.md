@@ -1504,3 +1504,10 @@ X_n\in\{0,1,2\}.
 $$
 
 ---
+
+## Estados agregados
+
+<img class="diagram" src="images/componentes-reparables.png" alt="Cadena de Markov agregada para dos componentes reparables con estados 0, 1 y 2 componentes operativos">
+
+Cada círculo cuenta componentes operativos. Las transiciones curvas se calculan suponiendo independencia y actualización simultánea.
+
