@@ -863,3 +863,307 @@ P^4=P^2P^2,
 \qquad
 (P^4)_{01}=0.75.
 $$
+
+---
+
+## Del estado inicial conocido a la incertidumbre
+
+Si conocemos el estado inicial $i$, calculamos la probabilidad de llegar a $j$ en $n$ pasos. Si el estado inicial es incierto, pero conocemos sus probabilidades, la probabilidad de estar en $j$ se obtiene sumando las contribuciones de cada origen:
+
+$$
+P(X_n=j)=\sum_i P(X_0=i) p_{ij}^{(n)}
+$$
+
+Así, las probabilidades iniciales permiten calcular dónde puede estar el sistema tras $n$ pasos.
+
+---
+
+## Representar la incertidumbre inicial
+
+El vector fila reúne las probabilidades iniciales en el mismo orden de los estados en $P$:
+
+$$
+\boldsymbol\alpha^{(0)}
+=
+\begin{bmatrix}
+P(X_0=0)&P(X_0=1)
+\end{bmatrix}.
+$$
+
+Por ejemplo,
+
+$$
+\boldsymbol\alpha^{(0)}
+=
+\begin{bmatrix}
+0.3&0.7
+\end{bmatrix}
+$$
+
+significa que inicialmente hay un $30\%$ de probabilidad de que el servidor esté caído y un $70\%$ de que esté operativo.
+
+Es fila porque cada fila de $P$ describe transiciones desde un estado de origen, y $\boldsymbol\alpha^{(0)}P$ combina esas posibilidades.
+
+---
+
+## Distribución transiente
+
+La distribución transiente es la distribución del sistema tras un número finito de pasos y, en general, depende del estado inicial.
+
+Después de un paso:
+
+$$
+\boldsymbol\alpha^{(1)}
+=
+\boldsymbol\alpha^{(0)}P.
+$$
+
+Después de $n$ pasos:
+
+$$
+\boxed{
+\boldsymbol\alpha^{(n)}
+=
+\boldsymbol\alpha^{(0)}P^n
+}
+$$
+
+Cada componente $\alpha_j^{(n)}$ es la probabilidad de encontrar el sistema en $j$ después de $n$ pasos.
+
+---
+
+## Ejemplo transiente
+
+Consideremos el siguiente vector que representa un servidor caído:
+
+$$
+\boldsymbol\alpha^{(0)}
+=
+\begin{bmatrix}
+1&0
+\end{bmatrix}.
+$$
+
+Después de un minuto, se multiplica el vector fila por la matriz:
+
+$$
+\begin{aligned}
+\boldsymbol\alpha^{(1)}
+&=
+\underbrace{\begin{bmatrix}1&0\end{bmatrix}}_{\text{vector fila inicial}}
+\underbrace{\begin{bmatrix}0.6&0.4\\0.1&0.9\end{bmatrix}}_{\text{matriz }P}\\
+&=\underbrace{\begin{bmatrix}0.6&0.4\end{bmatrix}}_{\text{vector fila resultante}}.
+\end{aligned}
+$$
+
+El resultado también es un vector de probabilidades: 60\% caído y 40\% operativo. Por tanto, la probabilidad de estar operativo al minuto es $0.4$.
+
+---
+
+## Ejemplo transiente: dos pasos
+
+Como
+
+$$
+P^2=
+\begin{bmatrix}
+0.40&0.60\\
+0.15&0.85
+\end{bmatrix},
+$$
+
+entonces
+
+$$
+\boldsymbol\alpha^{(2)}
+=
+\begin{bmatrix}
+1&0
+\end{bmatrix}P^2
+=
+\begin{bmatrix}
+0.40&0.60
+\end{bmatrix}.
+$$
+
+La probabilidad de estar operativo después de dos minutos aumentó a
+
+$$
+\boxed{0.60}.
+$$
+
+---
+
+## Ejemplo transiente: dos pasos con incertidumbre inicial
+
+Supongamos que al inicio el vector fila define las siguientes probabilidades para el servidor en el estado inicial:
+
+$$
+\boldsymbol\alpha^{(0)}=
+\begin{bmatrix}
+0.3&0.7
+\end{bmatrix}.
+$$
+
+Reutilizamos la matriz de dos pasos del ejemplo anterior:
+
+$$
+\begin{aligned}
+\boldsymbol\alpha^{(2)}
+&=\begin{bmatrix}0.3&0.7\end{bmatrix}
+\begin{bmatrix}0.40&0.60\\0.15&0.85\end{bmatrix}\\
+&=\begin{bmatrix}0.225&0.775\end{bmatrix}.
+\end{aligned}
+$$
+
+Después de dos minutos, hay un $22.5\%$ de probabilidad de que el servicio esté caído y un $77.5\%$ de que esté operativo. En particular,
+
+$$
+\boxed{P(X_2=1)=0.775}.
+$$
+
+---
+
+## Tres preguntas distintas
+
+| Pregunta | Objeto |
+|---|---|
+| Si estoy en $i$, ¿qué ocurre en el próximo paso? | $p_{ij}$ |
+| Si parto en $i$, ¿dónde estaré después de $n$ pasos? | $p_{ij}^{(n)}$ |
+| Si mi estado inicial es incierto, ¿cómo se distribuye el sistema después de $n$ pasos? | $\boldsymbol\alpha^{(n)}$ |
+
+<div class="callout">
+
+Todas utilizan la misma matriz de transición, pero responden preguntas diferentes.
+
+</div>
+
+---
+
+## ¿Qué ocurre después de muchos pasos?
+
+Hasta ahora hemos preguntado por tiempos específicos:
+
+$$
+n=1,\,2,\,10,\ldots
+$$
+
+Pero también podemos preguntar:
+
+> Si el sistema opera durante mucho tiempo, ¿qué fracción de las observaciones estará en cada estado?
+
+Esto conduce al comportamiento **estacionario**.
+
+---
+
+## Distribución estacionaria
+
+Una distribución
+
+$$
+\boldsymbol\pi
+=
+\begin{bmatrix}
+\pi_0&\pi_1&\cdots
+\end{bmatrix}
+$$
+
+es estacionaria si permanece igual después de una transición:
+
+$$
+\boxed{\boldsymbol\pi=\boldsymbol\pi P}
+$$
+
+con
+
+$$
+\sum_i\pi_i=1,
+\qquad
+\pi_i\geq0.
+$$
+
+<div class="callout">
+
+La probabilidad asociada a un estado puede interpretarse como su fracción de largo plazo cuando la cadena cumple las condiciones adecuadas de convergencia.
+
+</div>
+
+---
+
+## Resolver una cadena de dos estados
+
+Considere
+
+$$
+P=
+\begin{bmatrix}
+1-r&r\\
+p&1-p
+\end{bmatrix}.
+$$
+
+Los estados son $0$ y $1$. La probabilidad de pasar de $0$ a $1$ es
+$r=P(0\to1)$, y la de pasar de $1$ a $0$ es $p=P(1\to0)$.
+
+Una distribución estacionaria cumple
+
+$$
+\boldsymbol\pi=\boldsymbol\pi P.
+$$
+
+Sus componentes también deben sumar uno:
+
+$$
+\pi_0+\pi_1=1.
+$$
+
+---
+
+## Balance de flujos entre los estados
+
+La primera componente de $\boldsymbol\pi=\boldsymbol\pi P$ dice que la probabilidad de estar en $0$ después de un paso es
+
+$$
+\pi_0=\pi_0(1-r)+\pi_1p.
+$$
+
+El sistema puede permanecer en $0$ o llegar a $0$ desde $1$. Al reordenar,
+
+$$
+\pi_0r=\pi_1p.
+$$
+
+En régimen estacionario, $\pi_0r$ es la probabilidad por paso de ir de $0$ a $1$, y $\pi_1p$ la de ir de $1$ a $0$. Como la distribución se mantiene estable, ambos flujos se compensan. Con este balance y la normalización, obtenemos la solución general.
+
+---
+
+## Solución general
+
+A partir de
+
+$$
+\pi_0r=\pi_1p
+$$
+
+y
+
+$$
+\pi_0+\pi_1=1,
+$$
+
+se obtiene
+
+$$
+\boxed{
+\pi_0=\frac{p}{p+r}
+}
+$$
+
+y
+
+$$
+\boxed{
+\pi_1=\frac{r}{p+r}
+}.
+$$
+
