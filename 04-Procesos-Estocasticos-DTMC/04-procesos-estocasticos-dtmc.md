@@ -310,7 +310,7 @@ $$
 
 Decimos que el tiempo es **discreto** cuando observamos el sistema en instantes separados, llamados pasos, en lugar de seguirlo continuamente.
 
-Al combinar estos pasos con un conjunto discreto de estados y modelar cómo el sistema cambia entre ellos, obtenemos una **cadena de Markov en tiempo discreto**, o **DTMC** (*Discrete-Time Markov Chain*).
+Al combinar estos pasos con un conjunto discreto de estados y modelar cómo el sistema cambia entre ellos, obtenemos una **cadena de Markov en tiempo discreto (DTMC)**.
 
 Una DTMC observa el sistema en pasos:
 
@@ -790,13 +790,13 @@ $$
 
 <div class="bridge">
 
-Esta identidad se conoce como **ecuación de Chapman-Kolmogorov**. La multiplicación de matrices la expresa de forma compacta.
+Esta identidad se conoce como **ecuación de Chapman y Kolmogorov**. La multiplicación de matrices la expresa de forma compacta.
 
 </div>
 
 ---
 
-## ¿Por qué es útil Chapman Kolmogorov?
+## ¿Por qué es útil la ecuación de Chapman y Kolmogorov?
 
 La descomposición permite pasar de una probabilidad de un paso a probabilidades en horizontes más largos:
 
@@ -1394,7 +1394,7 @@ $$
 2=\text{normal}.
 $$
 
-El SLA (acuerdo de nivel de servicio) establece el nivel de funcionamiento que se considera aceptable.
+El SLA (acuerdo de nivel de servicio/Service Level Agreement) establece el nivel de funcionamiento que se considera aceptable.
 
 Si el SLA acepta operación degradada:
 
@@ -1783,7 +1783,7 @@ La cadena es la misma. Lo que cambia es la definición de servicio aceptable.
 
 ---
 
-## ¿Qué agregó Markov respecto del RBD?
+## ¿Qué agrega Markov respecto del RBD?
 
 El RBD responde:
 
@@ -1804,3 +1804,408 @@ Confiabilidad y disponibilidad son preguntas diferentes porque permiten historia
 
 </div>
 
+---
+
+## Una nueva pregunta
+
+Sabemos calcular
+
+$$
+p_{ij}^{(n)}
+=
+P(X_n=j\mid X_0=i).
+$$
+
+Pero esta probabilidad permite que el sistema haya visitado $j$ antes.
+
+A veces queremos preguntar:
+
+> ¿Cuál es la probabilidad de llegar al estado $j$ **por primera vez** exactamente en el paso $n$?
+
+---
+
+## Tiempo de primera visita
+
+Definimos el primer instante posterior a $n=0$ en que se alcanza $j$:
+
+$$
+T_j=
+\min\{n\geq1:X_n=j\}.
+$$
+
+Si $i\ne j$, es una primera visita a $j$. Si $i=j$, es un primer retorno y escribimos $T_i^+=T_i$.
+
+La probabilidad correspondiente es
+
+$$
+\boxed{
+f_{ij}^{(n)}
+=
+P(T_j=n\mid X_0=i)
+}.
+$$
+
+---
+
+## Tiempo de primera visita
+
+Esta probabilidad depende del estado inicial $i$. Si varias rutas llegan a $j$ por primera vez en el paso $n$, sus probabilidades se suman porque son alternativas excluyentes.
+
+Siempre se cumple $f_{ij}^{(n)}\leq p_{ij}^{(n)}$. Hay igualdad cuando toda trayectoria que llega a $j$ lo visita por primera vez, por ejemplo si $n=1$.
+
+<div class="warn">
+
+La matriz de $n$ pasos puede incluir trayectorias que llegaron a $j$ antes del paso $n$.
+
+</div>
+
+---
+
+## Primer retorno
+
+Cuando $i=j$, la primera visita posterior a $n=0$ recibe el nombre de primer retorno:
+
+$$
+T_i^+
+=
+T_i
+=
+\min\{n\geq1:X_n=i\}.
+$$
+
+Desde $i$, la probabilidad de primer retorno en el paso $n$ es $f_{ii}^{(n)}=P(T_i^+=n\mid X_0=i)$.
+
+El símbolo $+$ indica que el estado inicial en $n=0$ **no cuenta como retorno**.
+
+---
+
+## Ejemplo de primer retorno
+
+Volvamos al servicio de dos estados:
+
+$$
+0=\text{caído},
+\qquad
+1=\text{operativo}.
+$$
+
+Como solo existen los estados $0$ y $1$, para regresar **por primera vez** a $0$ en el paso $2$ la trayectoria debe ser:
+
+$$
+0\to1\to0.
+$$
+
+Por tanto,
+
+$$
+P(T_0^+=2\mid X_0=0)
+=
+rp.
+$$
+
+Con $r=0.4$ y $p=0.1$:
+
+$$
+\boxed{0.04}.
+$$
+
+---
+
+## Trayectoria de retorno
+
+<img class="diagram" src="images/primer-retorno.png" alt="Trayectoria de primer retorno 0, 1, 0 en dos pasos">
+
+Para que $T_0^+=2$, el paso intermedio debe estar en $1$. El retorno ocurre recién en $n=2$.
+
+---
+
+## ¿Por qué no usamos $(P^2)_{00}$?
+
+Después de dos pasos:
+
+$$
+(P^2)_{00}=0.40.
+$$
+
+Ese valor suma todas las trayectorias que terminan en $0$ tras dos pasos, incluida
+
+$$
+0\to0\to0.
+$$
+
+Pero esa trayectoria ya regresó a $0$ en el paso $1$.
+
+<div class="callout">
+
+La potencia $P^n$ responde **dónde estamos**.<br>
+El primer retorno exige **no haber regresado antes**.
+
+</div>
+
+---
+
+## Primer retorno en el paso 3
+
+Como la cadena solo tiene dos estados, para volver por primera vez a $0$ en el paso $3$ debemos seguir
+
+$$
+0\to1\to1\to0.
+$$
+
+Por tanto,
+
+$$
+P(T_0^+=3\mid X_0=0)
+=
+r(1-p)p.
+$$
+
+Con
+
+$$
+r=0.4,\qquad p=0.1,
+$$
+
+se obtiene
+
+$$
+\boxed{0.036}.
+$$
+
+---
+
+<!-- _class: compact -->
+
+## Relación recursiva para primera visita
+
+Para $n\geq1$, agrupamos las trayectorias que terminan en $j$ según el paso $k$ de su primera llegada:
+
+$$
+p_{ij}^{(n)}
+=
+\sum_{k=1}^{n}
+f_{ij}^{(k)}
+p_{jj}^{(n-k)},
+\qquad
+p_{jj}^{(0)}=1.
+$$
+
+Por tanto,
+
+$$
+f_{ij}^{(n)}
+=
+p_{ij}^{(n)}
+-
+\sum_{k=1}^{n-1}
+f_{ij}^{(k)}
+p_{jj}^{(n-k)}.
+$$
+
+<div class="bridge">
+
+Toda trayectoria que termina en $j$ lo visita por primera vez en un único paso $k$. Sumamos las rutas según ese paso. Si $i=j$, se trata de un primer retorno.
+
+</div>
+
+
+---
+
+## Qué debemos poder hacer ahora
+
+Ante una DTMC:
+
+1. definir qué significa cada estado.
+2. fijar qué representa un paso.
+3. construir y verificar $P$.
+4. usar $P^n$ para probabilidades futuras.
+5. usar $\boldsymbol\alpha^{(0)}P^n$ para el transiente.
+6. resolver $\boldsymbol\pi=\boldsymbol\pi P$ para el régimen estacionario.
+7. sumar estados aceptables para obtener disponibilidad.
+8. distinguir $P^n$ de una probabilidad de primera visita.
+
+---
+
+## De tiempo discreto a tiempo continuo
+
+En esta clase:
+
+> al final de cada intervalo el estado se actualiza según probabilidades $p_{ij}$ y puede permanecer igual.
+
+Pero las fallas y reparaciones reales pueden ocurrir en cualquier instante.
+
+En tiempo continuo aparecerán **tasas**:
+
+$$
+D\,(0)
+\xrightleftharpoons[\lambda]{\mu}
+U\,(1).
+$$
+
+<div class="bridge">
+
+La siguiente clase introducirá la matriz generadora $Q$, cuyas entradas son tasas y no probabilidades.
+
+Los conceptos de **estado, transiente y estacionario** permanecerán.
+
+</div>
+
+---
+
+## Vista previa CTMC
+
+<img class="diagram" src="images/birth-death-queue.png" alt="Proceso de estados con tasas de nacimiento lambda y muerte mu">
+
+Una CTMC es una cadena de Markov en tiempo continuo. El estado puede cambiar en cualquier instante y las transiciones se describen con tasas, no con probabilidades por intervalo.
+
+---
+
+
+## Ejercicio
+
+Un enlace se observa cada minuto y puede estar:
+
+$$
+0=\text{malo},
+\qquad
+1=\text{bueno}.
+$$
+
+Si está malo, mejora con probabilidad $0.4$.
+
+Si está bueno, empeora con probabilidad $0.1$.
+
+1. Construya el diagrama y la matriz $P$.
+2. Si parte malo, calcule la probabilidad de estar bueno después de dos minutos.
+3. Obtenga la distribución estacionaria.
+4. Interprete $\pi_1$.
+5. Calcule la probabilidad de regresar por primera vez al estado malo en el paso $2$.
+
+---
+
+## Solución: modelo
+
+Con el orden $(0,1)$:
+
+$$
+P=
+\begin{bmatrix}
+0.6&0.4\\
+0.1&0.9
+\end{bmatrix}.
+$$
+
+Diagrama: $0\xrightarrow{0.4}1$, $1\xrightarrow{0.1}0$, con bucles de $0.6$ y $0.9$.
+
+Cada fila suma $1$. La primera fila parte desde malo y la segunda desde bueno.
+
+---
+
+## Solución: dos pasos
+
+Calculamos
+
+$$
+P^2=
+\begin{bmatrix}
+0.40&0.60\\
+0.15&0.85
+\end{bmatrix}.
+$$
+
+Como parte malo:
+
+$$
+\boldsymbol\alpha^{(0)}
+=
+\begin{bmatrix}
+1&0
+\end{bmatrix}.
+$$
+
+Entonces:
+
+$$
+\boldsymbol\alpha^{(2)}
+=
+\begin{bmatrix}
+0.40&0.60
+\end{bmatrix}.
+$$
+
+La probabilidad solicitada es
+
+$$
+\boxed{0.60}.
+$$
+
+---
+
+## Solución: largo plazo
+
+El balance es
+
+$$
+0.4\pi_0=0.1\pi_1
+$$
+
+con
+
+$$
+\pi_0+\pi_1=1.
+$$
+
+Por tanto,
+
+$$
+\boxed{
+\boldsymbol\pi=
+\begin{bmatrix}
+0.2&0.8
+\end{bmatrix}}
+$$
+
+y el enlace está en estado bueno aproximadamente el
+
+$$
+\boxed{80\%}
+$$
+
+de las observaciones de largo plazo.
+
+---
+
+## Solución: primer retorno
+
+Para regresar por primera vez al estado malo en el paso $2$:
+
+$$
+0\to1\to0.
+$$
+
+Por tanto,
+
+$$
+P(T_0^+=2\mid X_0=0)
+=
+(0.4)(0.1)
+=
+\boxed{0.04}.
+$$
+
+No incluimos
+
+$$
+0\to0\to0
+$$
+
+porque ya regresó al estado $0$ en el primer paso.
+
+---
+
+## Referencias
+
+- K. S. Trivedi y A. Bobbio, *Reliability and Availability Engineering: Modeling, Analysis, and Applications*, Cambridge University Press, 2017, caps. 7 y 8.
+- W. J. Stewart, *Probability, Markov Chains, Queues, and Simulation*, Princeton University Press, 2009, caps. 3 y 5.
+- J. M. Martínez, *TEL211: Stochastic Processes*, material histórico USM.
+- Certámenes TEL211 2022 y 2023, problemas de cadenas de Markov en tiempo discreto.
