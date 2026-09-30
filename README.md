@@ -20,6 +20,7 @@ bajo carga para fundamentar decisiones de diseño y operación.
 | `01` | Fundamentos de probabilidad para confiabilidad y rendimiento | [PDF](01-Fundamentos-Probabilidad/01-fundamentos-probabilidad.pdf) · [fuente Markdown](01-Fundamentos-Probabilidad/01-fundamentos-probabilidad.md) · [notebook](01-Fundamentos-Probabilidad/codigo/distribuciones.ipynb) · [mapa de distribuciones](01-Fundamentos-Probabilidad/images/mapa-distribuciones.png) |
 | `02` | Teoría de confiabilidad: del tiempo de vida a una decisión | [PDF 02_1](02-Teoria-Confiabilidad/02_1-teoria-confiabilidad.pdf) · [Markdown 02_1](02-Teoria-Confiabilidad/02_1-teoria-confiabilidad.md) · [PDF 02_2](02-Teoria-Confiabilidad/02_2-modelacion-e-inferencia-confiabilidad.pdf) · [Markdown 02_2](02-Teoria-Confiabilidad/02_2-modelacion-e-inferencia-confiabilidad.md) · [curva de bañera](02-Teoria-Confiabilidad/images/bathtub-curve.svg) · [componente a servicio](02-Teoria-Confiabilidad/images/componente-a-servicio.svg) · [área bajo la curva MTTF](02-Teoria-Confiabilidad/images/mttf-area.svg) |
 | `03` | Diagramas de confiabilidad: RBD y árboles de falla | [PDF](03-Diagramas-Confiabilidad/03-diagramas-confiabilidad.pdf) · [fuente Markdown](03-Diagramas-Confiabilidad/03-diagramas-confiabilidad.md) · [RBD vs. árbol de falla](03-Diagramas-Confiabilidad/images/rbd-vs-ft.png) · [RBD mixto](03-Diagramas-Confiabilidad/images/rbd-mixto.png) |
+| `04` | Procesos estocásticos y cadenas de Markov en tiempo discreto | [PDF](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.pdf) · [fuente Markdown](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.md) |
 
 Las fuentes Markdown corresponden a las presentaciones editables. Los PDF son
 las versiones listas para lectura. Los notebooks incluyen cálculos y ejemplos
@@ -42,6 +43,7 @@ reproducibles asociados a las unidades correspondientes.
 01-Fundamentos-Probabilidad/           Modelos probabilísticos
 02-Teoria-Confiabilidad/               Confiabilidad e inferencia
 03-Diagramas-Confiabilidad/            RBD y árboles de falla
+04-Procesos-Estocasticos-DTMC/         Cadenas de Markov en tiempo discreto
 Ayudantías/                            Material de apoyo
 ejercicios/certamen1/                  Ejercicios y material de preparación para el Certamen 1
 evaluaciones/2026-2/                   Tareas y evaluaciones del semestre
