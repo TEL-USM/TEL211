@@ -326,33 +326,107 @@ Al inicio, la probabilidad de estar caído aumenta a razón de $0.1$ por hora y 
 
 ---
 
-## Calcular la distribución en tiempo $t$
-
-Para una CTMC finita, la solución con distribución inicial $\boldsymbol p(0)$ es
-
-$$
-P(t)=e^{Qt},\qquad \boldsymbol p(t)=\boldsymbol p(0)e^{Qt}.
-$$
-
-La exponencial es **matricial**. No se calcula exponenciando cada entrada por separado.
-
----
-
 ## La misma idea de Chapman y Kolmogorov
 
-La evolución durante $t+s$ puede separarse en dos intervalos:
+La transición durante $t+h$ puede separarse en un primer intervalo de duración $t$ y uno corto de duración $h$:
 
 $$
-P(t+s)=P(t)P(s).
+P(t+h)=P(t)P(h).
 $$
 
-El producto suma los posibles estados intermedios, como hicimos con $P^{n+r}$ en la clase 04.
+La multiplicación suma las posibilidades para el estado intermedio al terminar el primer intervalo.
 
 <div class="bridge">
 
-La distribución transiente depende del estado inicial. La matriz generadora permite calcularla para cualquier tiempo, no solo después de un número entero de pasos.
+Esta composición permite combinar la evolución en intervalos cortos para obtenerla en cualquier tiempo.
 
 </div>
+
+---
+
+## De $P(h)$ a la ecuación para $P(t)$
+
+Para el intervalo corto usamos $P(h)=I+hQ+o(h)$. Al sustituirlo en la composición:
+
+$$
+P(t+h)=P(t)(I+hQ+o(h)).
+$$
+
+Restamos $P(t)$, dividimos por $h$ y hacemos que $h$ tienda a cero:
+
+$$
+\frac{P(t+h)-P(t)}{h}
+=P(t)Q+P(t)\frac{o(h)}{h}
+\longrightarrow P(t)Q.
+$$
+
+Así obtenemos $P'(t)=P(t)Q$. La condición inicial es $P(0)=I$, porque en tiempo cero el estado no cambia.
+
+---
+
+## Solución: matriz de transición
+
+La solución de $P'(t)=P(t)Q$ con $P(0)=I$ es
+
+$$
+P(t)=e^{Qt}.
+$$
+
+Esta solución cumple $\frac{d}{dt}e^{Qt}=e^{Qt}Q$ y $e^{Q\cdot0}=I$. La exponencial es **matricial**: no se calcula exponenciando cada entrada de $Q$ por separado. [Referencia sobre la exponencial matricial (Wikipedia)](https://en.wikipedia.org/wiki/Matrix_exponential).
+
+Cada entrada $P(t)_{ij}$ da la probabilidad de terminar en $j$ tras tiempo $t$, partiendo de $i$.
+
+---
+
+## Aplicar $P(t)$ a la distribución inicial
+
+El vector fila $\boldsymbol p(0)$ indica las probabilidades de cada estado al inicio. Para hallar la distribución tras tiempo $t$, multiplicamos ese vector por la matriz de transición:
+
+$$
+\boldsymbol p(t)=\boldsymbol p(0)P(t)=\boldsymbol p(0)e^{Qt}.
+$$
+
+Para cada estado final $j$, la multiplicación equivale a sumar las contribuciones de todos los estados iniciales $i$:
+
+$$
+p_j(t)=\sum_i p_i(0)P(t)_{ij}.
+$$
+
+Cada producto $p_i(0)P(t)_{ij}$ combina la probabilidad de comenzar en $i$ con la de llegar desde $i$ a $j$ en tiempo $t$.
+
+---
+
+## Ejemplo: propagar la distribución inicial
+
+Retomemos el sistema reparable en el orden $(D,U)$, con reparación $\mu=0.5\ \mathrm h^{-1}$, falla $\lambda=0.1\ \mathrm h^{-1}$ y partida operativa:
+
+$$
+Q=\begin{bmatrix}-0.5&0.5\\0.1&-0.1\end{bmatrix}\ \mathrm h^{-1},
+\qquad \boldsymbol p(0)=\begin{bmatrix}0&1\end{bmatrix}.
+$$
+
+Al cabo de una hora, la matriz de transición es
+
+$$
+P(1\ \mathrm h)=e^{Q(1\ \mathrm h)}\approx
+\begin{bmatrix}0.6240&0.3760\\0.0752&0.9248\end{bmatrix}.
+$$
+
+---
+
+## Ejemplo: propagar la distribución inicial
+
+Entonces,
+
+$$
+\boldsymbol p(1\ \mathrm h)=\boldsymbol p(0)P(1\ \mathrm h)
+=\begin{bmatrix}0.0752&0.9248\end{bmatrix}.
+$$
+
+Como el sistema partió operativo, $\boldsymbol p(0)$, las probabilidades de estar caído y operativo son aproximadamente $0.0752$ y $0.9248$.
+
+- Pendiente inicial: $\boldsymbol p'(0)=[0.1,-0.1]\ \mathrm h^{-1}$. Si se mantuviera constante, daría $\boldsymbol p(1\ \mathrm h)\approx[0.1,0.9]$.
+- Resultado con $e^{Qt}$: $\boldsymbol p(1\ \mathrm h)=[0.0752,0.9248]$, incorpora cambios dados por la exponencial.
 
 ---
 
@@ -361,7 +435,7 @@ La distribución transiente depende del estado inicial. La matriz generadora per
 Un enlace alterna entre
 
 $$
-D=\text{caído},\qquad U=\text{operativo}.
+D=\text{caído/down},\qquad U=\text{operativo/up}.
 $$
 
 Supondremos tiempos exponenciales e independientes:
@@ -371,8 +445,6 @@ Supondremos tiempos exponenciales e independientes:
 - después de restaurarse, el servicio vuelve al mismo estado operativo.
 
 La permanencia en $D$ incluye toda la restauración representada en este modelo, desde la caída hasta el retorno al servicio.
-
-Usaremos el orden $(D,U)$, equivalente a $(\text{caído},\text{operativo})$ de la clase 04.
 
 ---
 
@@ -392,7 +464,12 @@ $$
 Q=\begin{bmatrix}-\mu&\mu\\\lambda&-\lambda\end{bmatrix}.
 $$
 
-Desde $D$, la permanencia media es $1/\mu$. Desde $U$, es $1/\lambda$.
+Las diagonales de $Q$ son negativas de las tasas totales de salida: $\nu_D=\mu$ y $\nu_U=\lambda$. Como la permanencia en $i$ es exponencial con tasa $\nu_i$, su media es $1/\nu_i$:
+
+$$
+E[S_D]=\frac{1}{\nu_D}=\frac{1}{\mu},
+\qquad E[S_U]=\frac{1}{\nu_U}=\frac{1}{\lambda}.
+$$
 
 Si parte operativo:
 
@@ -422,17 +499,30 @@ La disponibilidad aumenta por reparaciones y disminuye por fallas. Los flujos se
 
 ---
 
-## Solución transiente
+## Disponibilidad de equilibrio
 
-Para $\lambda+\mu>0$, la solución con cualquier disponibilidad inicial $A(0)$ es
+En equilibrio, la disponibilidad deja de cambiar y las reparaciones compensan las fallas:
+
+$$
+\underbrace{\mu(1-A_{\mathrm{eq}})}_{\text{flujo de reparación}}
+=\underbrace{\lambda A_{\mathrm{eq}}}_{\text{flujo de falla}}
+\quad\Longrightarrow\quad
+A_{\mathrm{eq}}=\frac{\mu}{\lambda+\mu}.
+$$
+
+Este es el nivel al que tiende la disponibilidad cuando disminuye la influencia de la condición inicial.
+
+---
+
+## Disponibilidad transiente: resultado
+
+Para $\lambda+\mu>0$ y cualquier disponibilidad inicial $A(0)$:
 
 $$
 A(t)=\frac{\mu}{\lambda+\mu}+\left(A(0)-\frac{\mu}{\lambda+\mu}\right)e^{-(\lambda+\mu)t}.
 $$
 
-Si el servicio parte operativo, $A(0)=1$. Si parte caído, $A(0)=0$.
-
-La influencia del estado inicial disminuye con el factor exponencial. Su escala temporal es $1/(\lambda+\mu)$.
+El primer término es el equilibrio. El segundo representa el efecto inicial, que decae con el tiempo. [Ver la derivación en el anexo](#anexo-derivacion-transiente).
 
 ---
 
@@ -500,24 +590,6 @@ $$
 $$
 
 La disponibilidad estacionaria es $A_\infty=\pi_U$. Coincide con el límite de la solución transiente que acabamos de obtener.
-
----
-
-## Conexión con tiempos medios
-
-Con tasas positivas, las permanencias medias en $U$ y $D$ son
-
-$$
-m_U=\frac{1}{\lambda},\qquad m_D=\frac{1}{\mu}.
-$$
-
-Al sustituirlos en la disponibilidad estacionaria:
-
-$$
-A_\infty=\frac{\mu}{\lambda+\mu}=\frac{m_U}{m_U+m_D}.
-$$
-
-En la clase 06 escribiremos $B=m_U$ y $D=m_D$ para las medias de operación y restauración. Precisaremos la convención de MTBF y MTTR y qué demoras incluye cada registro.
 
 ---
 
@@ -941,6 +1013,44 @@ $$
 La reparación compartida y las prioridades modifican las transiciones. Los valores por estado permiten medir disponibilidad, capacidad y costos.
 
 La clase 06 llevará estos resultados a tiempos medios, registros de fallas y acuerdos de nivel de servicio. La clase 07 usará nacimiento y muerte para estudiar solicitudes en espera.
+
+---
+
+<a id="anexo-derivacion-transiente"></a>
+
+## Anexo: derivación de la solución transiente
+
+Partimos del balance $A'(t)=\mu-(\lambda+\mu)A(t)$. En equilibrio $A'=0$, por lo que
+
+$$
+A_{\mathrm{eq}}=\frac{\mu}{\lambda+\mu}.
+$$
+
+Defina la diferencia respecto del equilibrio como $\Delta(t)=A(t)-A_{\mathrm{eq}}$. Al sustituir en el balance:
+
+$$
+\Delta'(t)=-(\lambda+\mu)\Delta(t).
+$$
+
+Por tanto, la diferencia decae exponencialmente:
+
+$$
+\frac{d}{dt}\left(e^{(\lambda+\mu)t}\Delta(t)\right)=0
+\quad\Longrightarrow\quad
+\Delta(t)=\Delta(0)e^{-(\lambda+\mu)t}.
+$$
+
+---
+
+## Anexo: incorporar la condición inicial
+
+Como $A(t)=A_{\mathrm{eq}}+\Delta(t)$ y $\Delta(0)=A(0)-A_{\mathrm{eq}}$, resulta
+
+$$
+A(t)=\frac{\mu}{\lambda+\mu}+\left(A(0)-\frac{\mu}{\lambda+\mu}\right)e^{-(\lambda+\mu)t}.
+$$
+
+Si el servicio parte operativo, $A(0)=1$. Si parte caído, $A(0)=0$. La escala temporal de decaimiento del efecto inicial es $1/(\lambda+\mu)$.
 
 ---
 
