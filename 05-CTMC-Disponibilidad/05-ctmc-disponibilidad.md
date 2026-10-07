@@ -301,7 +301,7 @@ $$
 \boldsymbol p'(t)=\boldsymbol p(t)Q.
 $$
 
-Cada producto combina la probabilidad de estar en un estado con una tasa. $p_i(t)q_{ij}$ es el flujo de probabilidad que entra a $j$ desde $i$, y $p_j(t)\nu_j$ el que sale de $j$.
+Cada producto es un flujo de probabilidad por unidad de tiempo, no una probabilidad: $p_i(t)q_{ij}$ entra a $j$ y $p_j(t)\nu_j$ sale de $j$.
 
 Más adelante aplicaremos el balance a las reparaciones que entran al estado operativo y las fallas que salen de él.
 
@@ -334,7 +334,7 @@ $$
 P(t+h)=P(t)P(h).
 $$
 
-La multiplicación suma las posibilidades para el estado intermedio al terminar el primer intervalo.
+Cada entrada suma sobre el estado intermedio $k$: $P(t+h)_{ij}=\sum_k P(t)_{ik}P(h)_{kj}$.
 
 <div class="bridge">
 
@@ -644,21 +644,9 @@ La CTMC describe cómo evoluciona el sistema. El criterio de servicio determina 
 
 ---
 
-## Dos componentes: qué cambia respecto de la DTMC
-
-En la clase 04, un intervalo podía terminar con dos componentes fallados porque ambos podían cambiar entre observaciones.
-
-En el modelo continuo usaremos fallas independientes, tiempos exponenciales y eventos individuales.
-
-Una falla cambia el número operativo en una unidad. Dos fallas simultáneas tienen probabilidad cero bajo estos supuestos.
-
-Esto no excluye dos fallas sucesivas durante un intervalo finito. Esa trayectoria se incluye al calcular $P(t)$.
-
----
-
 ## Dos componentes: estados y reparación
 
-Para dos componentes idénticos, definimos $X(t)$ como el número de componentes operativos:
+Ahora analizaremos un sistema reparable con dos componentes idénticos. Definimos $X(t)$ como el número de componentes operativos:
 
 | Estado | Condición |
 |---|---|
@@ -666,7 +654,7 @@ Para dos componentes idénticos, definimos $X(t)$ como el número de componentes
 | $1$ | uno operativo |
 | $2$ | ambos operativos |
 
-La identidad de los componentes no cambia las tasas futuras, por lo que podemos contar cuántos operan.
+Como la identidad de los componentes no cambia las tasas futuras, basta contar cuántos operan. Cada falla o reparación individual cambia este conteo en una unidad.
 
 ---
 
@@ -770,15 +758,13 @@ La reparación compartida introduce dependencia aunque las fallas sean independi
 
 ## Prioridad de reparación: elegir el estado
 
-El material histórico combina un servidor de archivos con dos estaciones de trabajo.
+Consideremos un sistema de acceso a archivos con un servidor y dos estaciones de trabajo. Un reparador prioriza el servidor y suspende la reparación de las estaciones mientras este está caído.
 
 Definimos el estado $(w,f)$:
 
 - $w\in\{0,1,2\}$ es el número de estaciones operativas.
 - $f\in\{0,1\}$ indica si el servidor está operativo.
 - el servicio requiere $f=1$ y al menos una estación operativa.
-
-Un reparador da prioridad al servidor. La reparación de estaciones queda suspendida mientras el servidor esté caído.
 
 ---
 
@@ -823,13 +809,13 @@ Cuando el servidor está caído, el estado $(1,0)$ tiene una tasa total de salid
 
 ## Prioridad de reparación: disponibilidad
 
-Los estados que prestan servicio son
+El objetivo aquí es construir la CTMC, definir sus transiciones y fijar qué estados prestan servicio. Para obtener una disponibilidad numérica, se asignan valores a las tasas y se resuelve $\boldsymbol\pi Q=\boldsymbol0$, junto con $\sum_i\pi_i=1$. Los estados que cuentan como servicio son
 
 $$
 \mathcal U=\{(1,1),(2,1)\}.
 $$
 
-Si resolvemos $\boldsymbol\pi Q=\boldsymbol0$ y normalizamos:
+La disponibilidad de largo plazo se obtiene sumando las probabilidades estacionarias de esos estados:
 
 $$
 A_\infty=\pi_{(1,1)}+\pi_{(2,1)}.
