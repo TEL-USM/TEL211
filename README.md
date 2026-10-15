@@ -21,6 +21,7 @@ bajo carga para fundamentar decisiones de diseño y operación.
 | `02` | Teoría de confiabilidad: del tiempo de vida a una decisión | [PDF 02_1](02-Teoria-Confiabilidad/02_1-teoria-confiabilidad.pdf) · [Markdown 02_1](02-Teoria-Confiabilidad/02_1-teoria-confiabilidad.md) · [PDF 02_2](02-Teoria-Confiabilidad/02_2-modelacion-e-inferencia-confiabilidad.pdf) · [Markdown 02_2](02-Teoria-Confiabilidad/02_2-modelacion-e-inferencia-confiabilidad.md) · [curva de bañera](02-Teoria-Confiabilidad/images/bathtub-curve.svg) · [componente a servicio](02-Teoria-Confiabilidad/images/componente-a-servicio.svg) · [área bajo la curva MTTF](02-Teoria-Confiabilidad/images/mttf-area.svg) |
 | `03` | Diagramas de confiabilidad: RBD y árboles de falla | [PDF](03-Diagramas-Confiabilidad/03-diagramas-confiabilidad.pdf) · [fuente Markdown](03-Diagramas-Confiabilidad/03-diagramas-confiabilidad.md) · [RBD vs. árbol de falla](03-Diagramas-Confiabilidad/images/rbd-vs-ft.png) · [RBD mixto](03-Diagramas-Confiabilidad/images/rbd-mixto.png) |
 | `04` | Procesos estocásticos y cadenas de Markov en tiempo discreto | [PDF](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.pdf) · [fuente Markdown](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.md) |
+| `05` | Cadenas de Markov en tiempo continuo, sistemas reparables, prioridades de reparación y disponibilidad | [PDF](05-CTMC-Disponibilidad/05-ctmc-disponibilidad.pdf) · [fuente Markdown](05-CTMC-Disponibilidad/05-ctmc-disponibilidad.md) |
 
 Las fuentes Markdown corresponden a las presentaciones editables. Los PDF son
 las versiones listas para lectura. Los notebooks incluyen cálculos y ejemplos
@@ -35,6 +36,7 @@ reproducibles asociados a las unidades correspondientes.
 | Ayudantía 3 | Diagramas de confiabilidad | [PDF](Ayudantías/03-Diagramas-Confiabilidad/Ayudantia3_TIC.pdf) |
 | Certamen 1 | Preparación y material de apoyo | [Ejercicios tipo certamen](ejercicios/certamen1/ejercicios.pdf) · [formulario](ejercicios/certamen1/formulario-c1.pdf) · [soluciones](ejercicios/certamen1/soluciones.pdf) |
 | Tarea 1 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea1/enunciado/tarea1.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea1/enunciado/tarea1_notebook.ipynb) |
+| Tarea 2 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea2/enunciado/tarea2.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea2/enunciado/tarea2_notebook.ipynb) |
 
 ## Estructura del repositorio
 
@@ -44,6 +46,7 @@ reproducibles asociados a las unidades correspondientes.
 02-Teoria-Confiabilidad/               Confiabilidad e inferencia
 03-Diagramas-Confiabilidad/            RBD y árboles de falla
 04-Procesos-Estocasticos-DTMC/         Cadenas de Markov en tiempo discreto
+05-CTMC-Disponibilidad/                Cadenas de Markov en tiempo continuo y disponibilidad
 Ayudantías/                            Material de apoyo
 ejercicios/certamen1/                  Ejercicios y material de preparación para el Certamen 1
 evaluaciones/2026-2/                   Tareas y evaluaciones del semestre
