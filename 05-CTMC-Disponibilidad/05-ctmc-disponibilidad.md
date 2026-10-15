@@ -32,7 +32,7 @@ Universidad Técnica Federico Santa María
 
 ## Continuidad
 
-En la clase 04 observamos un sistema reparable en pasos de duración fija. Calculamos su distribución futura y sumamos los estados que prestan servicio.
+Anteriormente, observamos un sistema reparable en pasos de duración fija. Calculamos su distribución futura y sumamos los estados que prestan servicio.
 
 Ahora queremos seguirlo mientras los eventos ocurren en cualquier instante:
 
@@ -346,7 +346,7 @@ Esta composición permite combinar la evolución en intervalos cortos para obten
 
 ## De $P(h)$ a la ecuación para $P(t)$
 
-Para el intervalo corto usamos $P(h)=I+hQ+o(h)$. Al sustituirlo en la composición:
+Para el intervalo corto usamos $P(h)=I+hQ+o(h)$. El término $o(h)$ se vuelve despreciable frente a $h$. Por ejemplo, $h^2/h=h\to0$. Al sustituirlo en la composición:
 
 $$
 P(t+h)=P(t)(I+hQ+o(h)).
@@ -632,7 +632,7 @@ Un valor estacionario no describe la recuperación de una caída reciente. Para 
 
 ## Disponibilidad desde varios estados
 
-Como en la clase 04, sea $\mathcal U$ el conjunto de estados que cumplen el nivel de servicio:
+Como en DTMC, sea $\mathcal U$ el conjunto de estados que cumplen el nivel de servicio:
 
 $$
 A(t)=\sum_{i\in\mathcal U}p_i(t),\qquad A_\infty=\sum_{i\in\mathcal U}\pi_i.
@@ -939,56 +939,86 @@ Un servidor tiene tiempos exponenciales de operación y restauración. El tiempo
 
 ---
 
-## Solución: tasas y largo plazo
+## Solución: tasas y generadora
+
+Como los tiempos de operación y restauración son exponenciales, sus tasas son los inversos de sus medias:
 
 $$
-\lambda=0.001\ \mathrm h^{-1},\qquad \mu=0.25\ \mathrm h^{-1}.
+\lambda=\frac{1}{1000}=0.001\ \mathrm h^{-1},
+\qquad \mu=\frac{1}{4}=0.25\ \mathrm h^{-1}.
 $$
 
+En el orden $(D,U)$, desde $D$ se restaura a tasa $\mu$ y desde $U$ se falla a tasa $\lambda$. Las diagonales son negativas de las tasas de salida:
+
 $$
-Q=\begin{bmatrix}-0.25&0.25\\0.001&-0.001\end{bmatrix},\qquad
+Q=\begin{bmatrix}-0.25&0.25\\0.001&-0.001\end{bmatrix}\ \mathrm h^{-1}.
+$$
+
+---
+
+## Solución: distribución estacionaria
+
+En equilibrio, el flujo de fallas iguala al de reparaciones, y las probabilidades suman uno:
+
+$$
+\pi_D\mu=\pi_U\lambda,
+\qquad \pi_D+\pi_U=1.
+$$
+
+La primera ecuación da $\pi_U/\pi_D=\mu/\lambda=250$. Al normalizar, $\pi_D=1/251$ y $\pi_U=250/251$:
+
+$$
 \boldsymbol\pi=\frac{1}{251}\begin{bmatrix}1&250\end{bmatrix}.
 $$
 
-Así, $A_\infty=250/251\approx0.996016$.
-
-La inactividad anual esperada es $(1-A_\infty)(8760\ \mathrm h)\approx34.9\ \mathrm h$. El cálculo supone que el régimen estacionario es representativo de ese año.
+El servicio está disponible solo en $U$, por lo que $A_\infty=\pi_U=250/251\approx0.996016$.
 
 ---
 
-## Solución: disponibilidad y misión
+## Solución: inactividad anual esperada
 
-Partiendo operativo:
-
-$$
-A(10)=\frac{250}{251}+\frac{1}{251}e^{-0.251(10)}\approx0.996340,
-\qquad R(10)=e^{-0.001(10)}\approx0.990050.
-$$
-
-Partiendo caído:
+En un año de $8760$ horas iniciado en régimen estacionario, la fracción de tiempo caído es $\pi_D=1-A_\infty$:
 
 $$
-A(10)=\frac{250}{251}\left(1-e^{-0.251(10)}\right)\approx0.915071.
+E[T_D]=(1-A_\infty)(8760\ \mathrm h)
+=\frac{8760}{251}\ \mathrm h\approx34.9\ \mathrm h.
 $$
 
-La reparación explica la diferencia entre $A(10)$ y $R(10)$. La condición inicial explica por qué una caída reciente requiere análisis transiente.
+Es una esperanza basada en el régimen estacionario, no una duración garantizada para cada año.
 
 ---
 
-## Revisión de un modelo CTMC
+## Solución: inicio operativo
 
-Antes de aceptar un resultado, revise:
+En la solución transiente, $A_\infty=250/251$, $A(0)=1$ y $\lambda+\mu=0.251\ \mathrm h^{-1}$:
 
-- ¿El estado conserva la información que cambia las tasas futuras?
-- ¿Las tasas tienen unidades compatibles y describen eventos permitidos?
-- ¿Las diagonales de $Q$ compensan las salidas y las filas suman cero?
-- ¿El vector inicial y $Q$ usan el mismo orden?
-- ¿Se pide una misión sin fallas, un instante o una fracción de largo plazo?
-- ¿El criterio de servicio está definido antes de sumar probabilidades?
+$$
+A(10)=\frac{250}{251}+\frac{1}{251}e^{-0.251(10)}\approx0.996340.
+$$
+
+La confiabilidad exige no fallar durante las diez horas. Como el tiempo hasta la primera falla es exponencial:
+
+$$
+R(10)=e^{-\lambda(10)}=e^{-0.001(10)}\approx0.990050.
+$$
+
+$A(10)$ permite fallas seguidas de reparación, mientras que $R(10)$ no.
 
 ---
 
-## Cierre y continuidad
+## Solución: inicio caído
+
+Si parte caído, $A(0)=0$. Sustituyendo en la misma solución transiente:
+
+$$
+A(10)=\frac{250}{251}\left(1-e^{-(0.001+0.25)(10)}\right)\approx0.915071.
+$$
+
+La probabilidad es menor que al partir operativo, porque el sistema debe recuperarse antes de estar disponible.
+
+---
+
+## Cierre
 
 Construimos una CTMC siguiendo la secuencia
 
@@ -998,7 +1028,7 @@ $$
 
 La reparación compartida y las prioridades modifican las transiciones. Los valores por estado permiten medir disponibilidad, capacidad y costos.
 
-La clase 06 llevará estos resultados a tiempos medios, registros de fallas y acuerdos de nivel de servicio. La clase 07 usará nacimiento y muerte para estudiar solicitudes en espera.
+Los próximos contenidos relacionan estos resultados con tiempos medios, registros de fallas y acuerdos de nivel de servicio, y aplican modelos de nacimiento y muerte al estudio de solicitudes en espera.
 
 ---
 
