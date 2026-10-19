@@ -48,7 +48,7 @@ reproducibles asociados a las unidades correspondientes.
 03-Diagramas-Confiabilidad/            RBD y árboles de falla
 04-Procesos-Estocasticos-DTMC/         Cadenas de Markov en tiempo discreto
 05-CTMC-Disponibilidad/                Cadenas de Markov en tiempo continuo y disponibilidad
-06-Metricas-Disponibilidad/             Métricas de confiabilidad, mantenibilidad y disponibilidad
+06-Metricas-Disponibilidad/            Métricas de confiabilidad, mantenibilidad y disponibilidad
 Ayudantías/                            Material de apoyo
 ejercicios/certamen1/                  Ejercicios y material de preparación para el Certamen 1
 evaluaciones/2026-2/                   Tareas y evaluaciones del semestre
