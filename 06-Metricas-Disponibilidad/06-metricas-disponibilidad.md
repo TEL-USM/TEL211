@@ -241,7 +241,7 @@ $$
 \mathrm{ROCOF}_\infty=\lambda A_\infty=\frac{1}{B+D}.
 $$
 
-$\lambda$ es una tasa condicionada a operar. Como $B=\mathrm{MTBF}$ y $D=\mathrm{MTTR}_{\mathrm{rest}}$, también $\mathrm{ROCOF}_\infty=1/(\mathrm{MTBF}+\mathrm{MTTR}_{\mathrm{rest}})$. Por eso no basta con invertir el MTBF.
+$\lambda$ es una tasa condicionada a operar. Como $B=\mathrm{MTBF}$ y $D=\mathrm{MTTR}_{\mathrm{rest}}$, también $\mathrm{ROCOF}_\infty=1/(\mathrm{MTBF}+\mathrm{MTTR}_{\mathrm{rest}})$.
 
 
 ---
