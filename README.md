@@ -22,6 +22,7 @@ bajo carga para fundamentar decisiones de diseño y operación.
 | `03` | Diagramas de confiabilidad: RBD y árboles de falla | [PDF](03-Diagramas-Confiabilidad/03-diagramas-confiabilidad.pdf) · [fuente Markdown](03-Diagramas-Confiabilidad/03-diagramas-confiabilidad.md) · [RBD vs. árbol de falla](03-Diagramas-Confiabilidad/images/rbd-vs-ft.png) · [RBD mixto](03-Diagramas-Confiabilidad/images/rbd-mixto.png) |
 | `04` | Procesos estocásticos y cadenas de Markov en tiempo discreto | [PDF](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.pdf) · [fuente Markdown](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.md) |
 | `05` | Cadenas de Markov en tiempo continuo, sistemas reparables, prioridades de reparación y disponibilidad | [PDF](05-CTMC-Disponibilidad/05-ctmc-disponibilidad.pdf) · [fuente Markdown](05-CTMC-Disponibilidad/05-ctmc-disponibilidad.md) |
+| `06` | Métricas de confiabilidad, mantenibilidad y disponibilidad, registros operacionales y acuerdos de nivel de servicio | [PDF](06-Metricas-Disponibilidad/06-metricas-disponibilidad.pdf) · [fuente Markdown](06-Metricas-Disponibilidad/06-metricas-disponibilidad.md) |
 
 Las fuentes Markdown corresponden a las presentaciones editables. Los PDF son
 las versiones listas para lectura. Los notebooks incluyen cálculos y ejemplos
@@ -47,6 +48,7 @@ reproducibles asociados a las unidades correspondientes.
 03-Diagramas-Confiabilidad/            RBD y árboles de falla
 04-Procesos-Estocasticos-DTMC/         Cadenas de Markov en tiempo discreto
 05-CTMC-Disponibilidad/                Cadenas de Markov en tiempo continuo y disponibilidad
+06-Metricas-Disponibilidad/             Métricas de confiabilidad, mantenibilidad y disponibilidad
 Ayudantías/                            Material de apoyo
 ejercicios/certamen1/                  Ejercicios y material de preparación para el Certamen 1
 evaluaciones/2026-2/                   Tareas y evaluaciones del semestre
@@ -73,5 +75,4 @@ El repositorio contiene materiales de clase y sus recursos asociados. Las
 fuentes Markdown permiten revisar la estructura de las presentaciones, los
 notebooks e imágenes complementan el material y la carpeta `evaluaciones/`
 conserva los enunciados y recursos de trabajo publicados durante el semestre.
-La carpeta `ejercicios/` reúne material de preparación y apoyo para el
-Certamen 1.
+La carpeta `ejercicios/` reúne material de preparación y apoyo para los certámenes.
