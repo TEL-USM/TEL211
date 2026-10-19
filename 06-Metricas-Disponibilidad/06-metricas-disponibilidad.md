@@ -252,6 +252,8 @@ $\lambda$ es una tasa condicionada a operar. Como $B=\mathrm{MTBF}$ y $D=\mathrm
 
 El usuario experimenta inactividad desde la falla hasta el retorno al servicio. Durante una parte de ese intervalo puede no haber trabajo correctivo activo.
 
+En este ejemplo, las $2$ horas de trabajo correctivo activo incluyen $1.5$ horas de reparación y $0.5$ horas de pruebas.
+
 ---
 
 ## Calcular la restauración efectiva
@@ -288,19 +290,17 @@ Este resultado resume el registro. Usarlo como una predicción requiere que las 
 
 ## El alcance define el tipo de disponibilidad
 
-| Tipo | Tiempo inactivo incluido | Uso habitual |
-|---|---|---|
-| Inherente (*inherent*) $A_i$ | trabajo correctivo activo | comparar diseños |
-| Lograda (*achieved*) $A_a$ | mantenimiento correctivo y preventivo activo | evaluar mantenimiento |
-| Operacional (*operational*) $A_o$ | trabajo activo y esperas de la operación | evaluar el servicio real |
+La disponibilidad inherente (*inherent*), lograda (*achieved*) y operacional (*operational*) se distinguen por las categorías de inactividad que incluyen.
 
-Para un mismo registro, las categorías deben ser excluyentes. Contar un período dos veces reduce artificialmente la disponibilidad.
+<img class="diagram" src="images/tipos-disponibilidad.png" alt="Categorías de tiempo registradas y componentes incluidos en las disponibilidades inherente, lograda y operacional">
+
+Las franjas coloreadas indican los tiempos incluidos y las grises, los excluidos.
 
 ---
 
 ## Ejemplo: tres tipos de disponibilidad
 
-En una ventana, el sistema opera $T_U=1000\ \mathrm h$. Registra $T_C=5\ \mathrm h$ de trabajo correctivo activo, $T_P=5\ \mathrm h$ de mantenimiento preventivo activo y $T_E=10\ \mathrm h$ de esperas.
+Con los tiempos del diagrama, las disponibilidades resultan:
 
 $$
 \begin{aligned}
@@ -380,7 +380,7 @@ Sin estas definiciones, dos cifras de disponibilidad no son comparables.
 
 ## Un presupuesto de inactividad
 
-Para un objetivo mínimo $a_{\min}$ y una ventana de duración $T$:
+El SLA fija una disponibilidad mínima $a_{\min}$ para una ventana de duración $T$. El presupuesto máximo de inactividad es:
 
 $$
 T_{D,\max}=(1-a_{\min})T.
@@ -458,59 +458,9 @@ La proyección anual es $8760/301\approx29.10$ h inactivas. La ventana no demues
 
 ---
 
-## Antes de comparar cifras
+## Del tiempo de servicio al tiempo de espera.
 
-| Situación | Lectura correcta |
-|---|---|
-| Dos MTTR con fronteras distintas | No se pueden comparar directamente |
-| Una alta disponibilidad observada | Describe una ventana, no garantiza el futuro |
-| Igual disponibilidad en dos servicios | Puede haber distinta frecuencia y duración de cortes |
-| Un promedio de intervalos abiertos | Requiere tratar la censura de forma explícita |
-| Una tasa calculada desde una media | Exige declarar el modelo que la justifica |
-
-Medir bien no consiste solo en aplicar una fórmula. También exige conservar el significado de los datos que entran en ella.
-
----
-
-## La pregunta determina la métrica
-
-| Pregunta | Métrica o resultado |
-|---|---|
-| ¿Qué probabilidad hay de completar una misión sin fallar? | Confiabilidad $R(t)$ |
-| ¿Cuánto vive una unidad hasta su primera falla, en promedio? | MTTF |
-| ¿Cuánto opera el servicio entre fallas recurrentes? | MTBF |
-| ¿Cuánto dura la reparación o la restauración completa? | MTTR, con alcance declarado |
-| ¿Con qué frecuencia ocurren fallas recurrentes? | $\mathrm{ROCOF}(t)$ |
-| ¿Qué probabilidad o fracción del tiempo entrega servicio? | $A(t)$, $A_{\mathrm{obs}}$, $\overline A(T)$, $A_\infty$, $A_i$, $A_a$, $A_o$ |
-| ¿Cuántas horas sin servicio se esperan o se permiten? | $E[T_D(T)]$, $T_{D,\max}$ |
-
-Cada indicador responde una pregunta distinta. La métrica se elige según la decisión que se quiere tomar.
-
----
-
-## La función requerida fija la frontera
-
-Una falla es el incumplimiento de una función requerida bajo condiciones dadas. Antes de medir, se debe acordar qué función, capacidad y conectividad son suficientes.
-
-| Decisión de frontera | Consecuencia |
-|---|---|
-| El servicio funciona con una ruta alternativa | La falla de una ruta no siempre es una interrupción |
-| Se exige capacidad completa | Un estado degradado puede contar como inactivo |
-| Se mide la experiencia del usuario | Las esperas de soporte forman parte del tiempo sin servicio |
-
-La misma avería puede ser una falla de componente y no ser una falla del servicio.
-
----
-
-## Cierre
-
-La secuencia de trabajo es:
-
-$$
-\text{función requerida}\rightarrow\text{registro de eventos}\rightarrow\text{métrica coherente}\rightarrow\text{impacto temporal}\rightarrow\text{decisión}.
-$$
-
-MTTF describe una vida. MTBF y MTTR describen ciclos de un servicio reparable. ROCOF cuenta recurrencia. La disponibilidad debe incluir una frontera y una ventana.
+En esta unidad, los registros de falla, operación y restauración se tradujeron en métricas con límites y supuestos explícitos. A continuación, analizaremos cómo la llegada de solicitudes y la capacidad de atención determinan la espera, la ocupación de los servidores y el bloqueo.
 
 ---
 
