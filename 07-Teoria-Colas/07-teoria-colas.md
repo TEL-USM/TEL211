@@ -491,16 +491,30 @@ $$
 W=\frac{1}{\mu(1-\rho)}
 $$
 
-| $\rho$ | $W$ respecto de $1/\mu$ |
-|---:|---:|
-| $0.50$ | $2$ veces |
-| $0.80$ | $5$ veces |
-| $0.90$ | $10$ veces |
-| $0.95$ | $20$ veces |
+El tiempo medio de servicio es $1/\mu$. La siguiente tabla expresa el tiempo total de permanencia $W$ como múltiplo de ese tiempo $\frac{W}{1/\mu}=\frac{1}{1-\rho}.$
+
+<table style="margin: 0 auto; text-align: center;">
+<thead>
+<tr><th>ρ</th><th>W/(1/μ)</th></tr>
+</thead>
+<tbody>
+<tr><td>0.50</td><td>2 veces</td></tr>
+<tr><td>0.80</td><td>5 veces</td></tr>
+<tr><td>0.90</td><td>10 veces</td></tr>
+<tr><td>0.95</td><td>20 veces</td></tr>
+</tbody>
+</table>
+
+
+---
+
+## Por qué la latencia crece tan rápido
+
+Por ejemplo, con $\rho=0.95$, el tiempo medio total es $20$ veces el tiempo de servicio. De ese total, $19$ veces corresponden a la espera en la fila, pues $W_q=W-1/\mu$. El servicio no se vuelve más lento. El aumento se debe a la espera.
 
 <div class="warn">
 
-El modelo es estable cuando $\rho<1$. Si $\rho$ se acerca a $1$, el tiempo medio aumenta y queda menos margen para variaciones en la carga.
+El modelo es estable cuando $\rho<1$. Al acercarse $\rho$ a $1$, el factor $1/(1-\rho)$ crece rápidamente y queda menos margen para variaciones en la carga.
 
 </div>
 
@@ -508,39 +522,66 @@ El modelo es estable cuando $\rho<1$. Si $\rho$ se acerca a $1$, el tiempo medio
 
 ## Ejemplo $M/M/1$: puerta de enlace
 
-Llegan $\lambda=125\ \mathrm{s}^{-1}$ y el tiempo medio de servicio es $2\ \mathrm{ms}$:
+Considere una puerta de enlace que recibe solicitudes y las envía a un único servidor. 
+
+Modele las llegadas como un proceso de Poisson y los tiempos de servicio como exponenciales e independientes. Suponga que $\lambda=125\ \mathrm{solicitudes/s}$ y que el tiempo medio de servicio es $1/\mu=2\ \mathrm{ms}$.
+
+### Preguntas
+
+1. Calcule la tasa media de servicio $\mu$ y la utilización $\rho$. Determine si el sistema es estable.
+2. Calcule el tiempo medio de permanencia $W$ y el tiempo medio de espera $W_q$.
+3. Calcule el número medio de solicitudes en el sistema $L$ y en la fila $L_q$. Interprete los resultados.
+
+---
+
+## Ejemplo $M/M/1$: respuestas
+
+**Tasa media de servicio**
 
 $$
-\mu=\frac{1}{0.002\ \mathrm s}=500\ \mathrm{s}^{-1}
+\mu=\frac{1}{\mathbb{E}[S]}=\frac{1}{2\ \mathrm{ms}}=500\ \mathrm{solicitudes/s}.
 $$
 
-$$
-\rho=\frac{125}{500}=0.25
-$$
+**Utilización y estabilidad**
 
 $$
-W=\frac{1}{500-125}=2.667\ \mathrm{ms}
+\rho=\frac{\lambda}{\mu}=\frac{125}{500}=0.25<1.
 $$
 
-$$
-W_q=W-\frac{1}{\mu}=0.667\ \mathrm{ms}
-$$
+El sistema es estable porque $\rho<1$.
+
+---
+
+## Ejemplo $M/M/1$: respuestas de tiempo
+
+$W$ mide el tiempo desde la llegada hasta la salida. $W_q$ mide solo la espera en la fila.
+
+**Permanencia media en el sistema**
 
 $$
-L=\lambda W\approx0.333
+W=\frac{1}{\mu-\lambda}=\frac{1}{500-125}\ \mathrm{s}=2.667\ \mathrm{ms}.
+$$
+
+**Espera media en la fila**
+
+$$
+W_q=\frac{\lambda}{\mu(\mu-\lambda)}=\frac{125}{500(500-125)}\ \mathrm{s}=0.667\ \mathrm{ms}.
 $$
 
 ---
 
-## Servicio ocupado y tasa de salida
+## Ejemplo $M/M/1$: respuestas de cantidad
 
-El servidor está ocupado con probabilidad $\rho=1-\pi_0$. Si está libre, no completa solicitudes. Si trabaja, las completa a tasa $\mu$.
+Por la ley de Little, $L=\lambda W$ y $L_q=\lambda W_q$:
 
 $$
-\mu\rho=\lambda.
+\begin{aligned}
+L &=\lambda W=(125\ \mathrm{solicitudes/s})(0.002667\ \mathrm{s})=0.333\ \mathrm{solicitudes},\\
+L_q &=\lambda W_q=(125\ \mathrm{solicitudes/s})(0.000667\ \mathrm{s})=0.083\ \mathrm{solicitudes}.
+\end{aligned}
 $$
 
-La tasa media de salida es menor que la capacidad $\mu$ cuando el servidor queda ocioso.
+En promedio, cada solicitud permanece $2.667\ \mathrm{ms}$ en el sistema, incluidos $0.667\ \mathrm{ms}$ de espera y $2\ \mathrm{ms}$ de servicio. $L$ y $L_q$ son promedios temporales, por eso pueden ser menores que una solicitud.
 
 ---
 
@@ -548,7 +589,7 @@ La tasa media de salida es menor que la capacidad $\mu$ cuando el servidor queda
 
 $K$ es el número máximo **en el sistema**, incluido quien está en servicio.
 
-Los estados son $0,1,\ldots,K$. En $K$ una llegada es rechazada y no cambia el estado. En $0$ no puede terminar un servicio.
+Los estados son $0,1,\ldots,K$. En $K$ una llegada es rechazada y no cambia el estado. En el estado $0$, el sistema está vacío y el servidor ocioso. No hay una solicitud en servicio que pueda salir.
 
 El balance entre vecinos sigue dando $\pi_n=\pi_0\rho^n$, pero ahora la normalización tiene solo $K+1$ términos. Aquí $\rho=\lambda/\mu$ compara la carga ofrecida con la capacidad.
 
