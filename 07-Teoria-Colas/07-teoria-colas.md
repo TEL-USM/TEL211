@@ -587,44 +587,100 @@ En promedio, cada solicitud permanece $2.667\ \mathrm{ms}$ en el sistema, inclui
 
 ## Capacidad finita: $M/M/1/K$
 
-$K$ es el número máximo **en el sistema**, incluido quien está en servicio.
+$K$ es el número máximo de solicitudes **en el sistema**, incluyendo quien está en servicio.
 
-Los estados son $0,1,\ldots,K$. En $K$ una llegada es rechazada y no cambia el estado. En el estado $0$, el sistema está vacío y el servidor ocioso. No hay una solicitud en servicio que pueda salir.
+Los estados son $0,1,\ldots,K$. En estado $K$, una nueva solicitud es rechazada y no cambia el estado. En el estado $0$, el sistema está vacío y el servidor ocioso. No hay una solicitud en servicio que pueda salir.
 
-El balance entre vecinos sigue dando $\pi_n=\pi_0\rho^n$, pero ahora la normalización tiene solo $K+1$ términos. Aquí $\rho=\lambda/\mu$ compara la carga ofrecida con la capacidad.
+El balance entre vecinos sigue dando $\pi_n=\pi_0\rho^n$, pero ahora la normalización tiene solo $K+1$ términos. Aquí $\rho=\lambda/\mu$ compara la carga de solicitudes con la capacidad.
 
-Incluso con $\rho\geq1$ existe una distribución estacionaria en esta cadena finita. Eso no garantiza una pérdida aceptable.
+<div class="warn">
+
+Incluso con $\rho\geq1$ **existe una distribución estacionaria** en esta cadena finita. Eso no garantiza una pérdida aceptable.
+
+</div>
 
 ---
 
 ## Capacidad finita: normalización
 
-Para $\rho\ne1$:
+**Balance.** Igualando los flujos entre $n$ y $n+1$: $\pi_n\lambda=\pi_{n+1}\mu$. Como $\lambda/\mu=\rho$, se obtiene $\pi_n=\rho^n\pi_0$.
+
+**Normalización.** Las probabilidades suman uno:
 
 $$
-\pi_n=\frac{(1-\rho)\rho^n}{1-\rho^{K+1}},
-\qquad 0\le n\le K
+1=\pi_0\sum_{n=0}^{K}\rho^n
 $$
 
-Si $\rho=1$, todos los estados tienen igual probabilidad:
+Por tanto, para todo $\rho$:
 
 $$
-\pi_n=\frac{1}{K+1}.
+\pi_n=\frac{\rho^n}{\sum_{k=0}^{K}\rho^k}
 $$
 
-La distribución está truncada por la capacidad. Los clientes que no entran no aparecen dentro de estos estados.
+La distribución está truncada por la capacidad: los clientes que no entran no aparecen en estos estados.
+
+---
+
+## Capacidad finita: suma geométrica
+
+Sea $S=\sum_{n=0}^{K}\rho^n$. Restamos $\rho S$, es decir, la misma suma multiplicada por $\rho$:
+
+$$
+\begin{aligned}
+S&=1+\rho+\cdots+\rho^K,\\
+\rho S&=\rho+\cdots+\rho^K+\rho^{K+1}.
+\end{aligned}
+$$
+
+Los términos $\rho,\ldots,\rho^K$ aparecen en ambas sumas y se cancelan:
+
+$$
+S-\rho S=1-\rho^{K+1}
+$$
+
+Si $\rho\neq1$, despejamos $S=\dfrac{1-\rho^{K+1}}{1-\rho}$.
+
+---
+
+## Capacidad finita: distribución
+
+Como $\pi_n=\rho^n/S$, para $\rho\neq1$:
+
+$$
+\pi_n=\frac{(1-\rho)\rho^n}{1-\rho^{K+1}}
+$$
+
+Si $\rho=1$, cada término de $S$ vale $1$, luego $S=K+1$ y $\pi_n=\dfrac{1}{K+1}$.
+
+La suma es finita, así que no se exige $\rho<1$. En $M/M/1$, en cambio, la serie infinita solo converge si $\rho<1$.
+
+Si $\rho<1$ y $K\to\infty$, entonces $\rho^{K+1}\to0$ y $\pi_n\to(1-\rho)\rho^n$, la distribución estacionaria de $M/M/1$.
+
+---
+
+## Sobrecarga: $\rho\geq1$ en $M/M/1$ y en $M/M/1/K$
+
+En $M/M/1$, la distribución estacionaria existe solo si $\rho<1$.
+
+| Con $\rho\geq1$ | $M/M/1$ | $M/M/1/K$ |
+|---|---|---|
+| Distribución estacionaria | No existe | Existe |
+| Tamaño de la fila | Crece sin límite | Nunca supera $K$ |
+| Llegadas con sistema lleno | Esperan | Se rechazan |
+
+Con capacidad finita, una llegada que encuentra el sistema lleno se rechaza y se produce **bloqueo**. Así, la tasa de solicitudes que llegan, $\lambda$, no coincide con la tasa que realmente entra al sistema, $\lambda_{\mathrm e}$.
 
 ---
 
 ## Bloqueo y tasa efectiva
 
-Por la propiedad *Poisson Arrivals See Time Averages* (PASTA), las llegadas ofrecidas de Poisson ven el sistema lleno con la misma probabilidad que en un instante cualquiera:
+El bloqueo $P_{\mathrm B}$ es la probabilidad de que el sistema esté a capacidad completa:
 
 $$
 P_{\mathrm B}=\pi_K
 $$
 
-La tasa admitida es:
+Las llegadas de Poisson ven el sistema como en un instante cualquiera (*Poisson Arrivals See Time Averages*, PASTA). Por eso, $P_{\mathrm B}$ también es la fracción de llegadas rechazadas, y $1-P_{\mathrm B}$ es la fracción que entra al sistema. Como las llegadas ofrecidas ocurren a tasa $\lambda$, la tasa admitida es:
 
 $$
 \lambda_{\mathrm e}=\lambda(1-P_{\mathrm B})
@@ -634,13 +690,43 @@ Las llegadas admitidas excluyen los rechazos y no forman necesariamente un proce
 
 ---
 
-## Medidas con capacidad finita
+## Ejemplo: bloqueo con $\rho\geq1$
 
-El servidor está ocupado con probabilidad $1-\pi_0$. En equilibrio, la tasa media de salida coincide con la tasa admitida:
+Con $\rho=1.2$ y $K=3$, la probabilidad de bloqueo es $P_{\mathrm B}=\pi_3$:
+
+$$
+P_{\mathrm B}=\pi_3=\frac{\rho^3}{1+\rho+\rho^2+\rho^3}=\frac{1.728}{5.368}\approx0.322
+$$
+
+Con $\lambda=12$ y $\mu=10$ solicitudes/min, la tasa admitida es:
+
+$$
+\lambda_{\mathrm e}=\lambda(1-P_{\mathrm B})\approx8.14\ \text{solicitudes/min}
+$$
+
+Aunque $\lambda>\mu$, la tasa admitida es menor que $\mu$. La diferencia $\lambda-\lambda_{\mathrm e}$ corresponde a las solicitudes rechazadas.
+
+<div class="warn">
+
+Que las medidas sean finitas no implica una pérdida aceptable. Esa valoración depende del SLA.
+
+</div>
+
+---
+
+## Tasa admitida y ocupación
+
+En equilibrio, el número de solicitudes en el sistema no crece de forma sostenida, así que lo que entra debe salir. Entran las solicitudes admitidas, a tasa $\lambda_{\mathrm e}$. Salen a tasa $\mu$ cuando el servidor está ocupado, lo que ocurre con probabilidad $1-\pi_0$. Por tanto:
 
 $$
 \lambda_{\mathrm e}=\mu(1-\pi_0).
 $$
+
+La ocupación real es $1-\pi_0=\lambda_{\mathrm e}/\mu$. No es necesariamente igual a la carga ofrecida $\lambda/\mu$.
+
+---
+
+## Medidas de los clientes admitidos
 
 Para $\lambda_{\mathrm e}>0$, las medidas de los clientes admitidos son:
 
@@ -648,516 +734,148 @@ $$
 L=\sum_{n=0}^{K}n\pi_n,\qquad L_q=L-(1-\pi_0).
 $$
 
+- $L$ promedia $n$ usando $\pi_n$ como pesos: son las solicitudes medias en el sistema.
+- Con el servidor ocupado hay una solicitud en servicio, y eso ocurre con probabilidad $1-\pi_0$. Por eso $L_q$ resta ese valor a $L$.
+
 $$
 W=\frac{L}{\lambda_{\mathrm e}},\qquad W_q=\frac{L_q}{\lambda_{\mathrm e}}=W-\frac{1}{\mu}.
 $$
 
-La ocupación real es $1-\pi_0=\lambda_{\mathrm e}/\mu$. No es necesariamente igual a la carga ofrecida $\lambda/\mu$.
+- Se aplica la ley de Little a las solicitudes admitidas, que entran a tasa $\lambda_{\mathrm e}$.
+- El servicio medio es $1/\mu$. Se descuenta de $W$ para obtener $W_q$.
 
 ---
 
-## Ejemplo de bloqueo
+## Ejemplo bloqueo $M/M/1/K$
 
-En una fila $M/M/1/K$, use $\lambda=8\ \mathrm{s}^{-1}$, $\mu=10\ \mathrm{s}^{-1}$ y $K=3$:
+En una fila $M/M/1/K$, considere $\lambda=8\ \mathrm{s}^{-1}$, $\mu=10\ \mathrm{s}^{-1}$ y $K=3$.
 
-$$
-\rho=0.8
-$$
+**Carga $\rho$.** Con $\rho=\lambda/\mu$:
 
 $$
-P_{\mathrm B}=\pi_3
-=\frac{(1-0.8)(0.8)^3}{1-(0.8)^4}
-\approx0.173442
+\rho=\frac{8}{10}=0.8
 $$
 
+**Bloqueo $P_{\mathrm B}$.** Con $P_{\mathrm B}=\pi_K=\dfrac{(1-\rho)\rho^K}{1-\rho^{K+1}}$:
+
 $$
-\lambda_{\mathrm e}=8(1-0.173442)
-\approx6.6125\ \mathrm{s}^{-1}
+P_{\mathrm B}=\frac{(0.2)(0.8)^3}{1-(0.8)^4}\approx0.173442
+$$
+
+---
+
+## Ejemplo bloqueo $M/M/1/K$: tasa admitida
+
+Con $\lambda=8\ \mathrm{s}^{-1}$ y $P_{\mathrm B}\approx0.173442$:
+
+**Tasa admitida $\lambda_{\mathrm e}$.** Con $\lambda_{\mathrm e}=\lambda(1-P_{\mathrm B})$:
+
+$$
+\lambda_{\mathrm e}=8(1-0.173442)\approx6.6125\ \mathrm{s}^{-1}
 $$
 
 Usar $\lambda$ en lugar de $\lambda_{\mathrm e}$ incluye solicitudes rechazadas y subestima el tiempo $W=L/\lambda_{\mathrm e}$ de los clientes admitidos.
 
 ---
 
-## Completar el ejemplo de capacidad finita
+## Ejemplo bloqueo $M/M/1/K$: distribución
 
-Con $\rho=0.8$ y $K=3$, la fila $\boldsymbol\pi$ lista las probabilidades de los estados $0$ a $K$:
+Con $\rho=0.8$ y $K=3$:
 
-$$
-\boldsymbol\pi\approx\begin{bmatrix}0.338753&0.271003&0.216802&0.173442\end{bmatrix}.
-$$
+**Probabilidades $\pi_n$.** Con $\pi_n=\dfrac{(1-\rho)\rho^n}{1-\rho^{K+1}}$:
 
 $$
-L=\sum_{n=0}^3n\pi_n\approx1.224932,
-\qquad W=\frac{L}{\lambda_{\mathrm e}}\approx0.185246\ \mathrm s.
+\pi_n=\frac{(0.2)(0.8)^n}{0.5904}
 $$
 
-Entonces $W_q=W-0.1\ \mathrm s\approx0.085246\ \mathrm s$.
+Así, $\pi_0\approx0.338753$, $\pi_1\approx0.271003$, $\pi_2\approx0.216802$ y $\pi_3\approx0.173442$.
+
+**Número medio en el sistema $L$.** Con $L=\sum_{n=0}^{K}n\pi_n$:
+
+$$
+L=0.271003+2(0.216802)+3(0.173442)\approx1.224932
+$$
+
+---
+
+## Ejemplo bloqueo $M/M/1/K$: tiempos
+
+**Tiempo en el sistema $W$.** Con $W=L/\lambda_{\mathrm e}$, por la ley de Little aplicada a los clientes admitidos:
+
+$$
+W=\frac{1.224932}{6.6125}\approx0.185246\ \mathrm{s}
+$$
+
+**Tiempo de espera $W_q$.** Con $W_q=W-1/\mu$:
+
+$$
+W_q=0.185246-0.1\approx0.085246\ \mathrm{s}
+$$
 
 El tiempo $W$ corresponde a clientes admitidos. El bloqueo se informa aparte, porque las solicitudes rechazadas no reciben servicio.
 
 ---
 
-## Taller: dimensionar el espacio de espera
+## Ejemplo $M/M/1/K$: espacio de espera
 
-Una puerta de enlace de red recibe $\lambda=125\ \mathrm{paquetes}\,\mathrm{s}^{-1}$ y tiene un tiempo de servicio medio de $2\ \mathrm{ms}$. Suponemos un modelo $M/M/1/K$ con $\rho=0.25$.
+Una puerta de enlace recibe paquetes con tasa $\lambda=125$ paquetes/s, y su tiempo de servicio medio es $2$ ms. Se modela como $M/M/1/K$, donde $K$ incluye el paquete en servicio y $B=K-1$ es el número de puestos de espera. Se pide:
 
-Para $B$ puestos de espera, $K=B+1$:
-
-$$
-P_{\mathrm B}=\frac{0.75(0.25)^K}{1-(0.25)^{K+1}}.
-$$
-
-Con $B=13$, la capacidad total es $K=14$ y $P_{\mathrm B}\approx2.794\times10^{-9}$.
-
-Con $K=9$, $P_{\mathrm B}\approx2.861\times10^{-6}$. Con $K=10$, $P_{\mathrm B}\approx7.153\times10^{-7}$.
-
-Para bajar de un paquete perdido por millón se requieren al menos $K=10$ puestos totales, equivalentes a nueve puestos de espera.
+1. Calcule $\mu$ y $\rho$.
+2. Calcule $P_{\mathrm B}$ para $K=9$, $K=10$ y $K=14$.
+3. Determine el menor $K$ con $P_{\mathrm B}\leq10^{-6}$ (un paquete perdido por millón) y el número de puestos de espera correspondiente.
 
 ---
 
-## Varios servidores: $M/M/c$
+## Ejemplo $M/M/1/K$: tasa y carga
 
-Las solicitudes llegan según Poisson a una fila común ilimitada. Cada uno de los $c$ servidores tiene tiempos de servicio exponenciales de media $1/\mu$. Llegadas y servicios son independientes, y la fila atiende en orden de llegada.
+**Tasa de servicio $\mu$.** Con $\mu=1/\mathbb{E}[S]$:
 
-<img class="diagram" src="images/mmc-model.png" alt="Una fila común distribuye solicitudes a varios servidores en paralelo">
+$$
+\mu=\frac{1}{2\ \mathrm{ms}}=500\ \text{paquetes/s}
+$$
 
-En el estado $n$, $\min(n,c)$ es el menor valor entre $n$ y $c$. Por tanto, la tasa total de salida es $\min(n,c)\mu$. Si hay menos clientes que servidores, solo una parte de los servidores está trabajando.
+**Carga $\rho$.** Con $\rho=\lambda/\mu$:
+
+$$
+\rho=\frac{125}{500}=0.25
+$$
+
+Como $\rho<1$, la carga ofrecida es menor que la capacidad. Aun así, una capacidad finita produce pérdidas.
 
 ---
 
-## $M/M/c$: carga y estabilidad
+## Ejemplo $M/M/1/K$: bloqueo
 
-Llame $a$ al tráfico ofrecido, medido en Erlangs, y $\rho$ a la carga por servidor. En régimen estable, $\rho$ es la utilización media de cada servidor:
-
-$$
-a=\frac{\lambda}{\mu},
-\qquad
-\rho=\frac{\lambda}{c\mu}=\frac{a}{c}
-$$
-
-La condición de estabilidad es:
+Con $\rho=0.25$, la probabilidad de bloqueo es $P_{\mathrm B}=\pi_K$:
 
 $$
-\lambda<c\mu
+P_{\mathrm B}=\pi_K=\frac{(1-\rho)\rho^K}{1-\rho^{K+1}}=\frac{0.75\,(0.25)^K}{1-(0.25)^{K+1}}
 $$
 
----
-
-## $M/M/c$: antes y después de llenar los servidores
-
-El balance local es
+Con $B=K-1$ puestos de espera, para cada capacidad:
 
 $$
-\pi_n\lambda=\pi_{n+1}\min(n+1,c)\mu.
-$$
-
-Con $a=\lambda/\mu$ y usando $n!$ para el factorial de $n$:
-
-$$
-\pi_n=\pi_0\frac{a^n}{n!}\quad(n<c),
-\qquad \pi_n=\pi_0\frac{a^c}{c!}\rho^{n-c}\quad(n\geq c).
-$$
-
-Hasta $c$ aumenta el número de servidores ocupados. Después, la capacidad total se mantiene en $c\mu$ y comienza a crecer la espera.
-
----
-
-## Tasas que dependen del estado
-
-En un proceso de nacimiento y muerte, $\lambda_n$ es la tasa de transición de $n$ a $n+1$ y $\mu_n$ la de $n$ a $n-1$. Ambas pueden depender del número $n$ de solicitudes.
-
-Para dos estados vecinos presentes en el sistema, el balance estacionario es:
-
-$$
-\pi_n\lambda_n=\pi_{n+1}\mu_{n+1}.
-$$
-
-Si $\mu_{n+1}>0$, se obtiene $\pi_{n+1}=\frac{\lambda_n}{\mu_{n+1}}\pi_n$.
-
-En $M/M/1/K$, el estado lleno $K$ no tiene transición de llegada a $K+1$. Las probabilidades se normalizan sobre los estados $0$ a $K$.
-
----
-
-## Probabilidad de esperar: Erlang C
-
-En $M/M/c$ estable, Erlang C, $C(c,a)$, da la probabilidad de esperar. Sea $T_q$ el tiempo de espera de una solicitud y $W_q$ su media. La notación $\Pr(\cdot)$ indica probabilidad.
-
-Primero calculamos $\pi_0$, la probabilidad de que el sistema esté vacío:
-
-$$
-\pi_0=\left[
-\sum_{n=0}^{c-1}\frac{a^n}{n!}
-+\frac{a^c}{c!}\frac{1}{1-\rho}
-\right]^{-1}
-$$
-
-Entonces:
-
-$$
-C(c,a)=\Pr(T_q>0)
-=\frac{a^c}{c!}\frac{1}{1-\rho}\,\pi_0
-$$
-
-Esperan las solicitudes que encuentran los $c$ servidores ocupados.
-
----
-
-## Métricas de $M/M/c$
-
-Una vez calculado $C(c,a)$:
-
-$$
-W_q=\frac{C(c,a)}{c\mu-\lambda}
-$$
-
-$$
-W=W_q+\frac{1}{\mu}
-$$
-
-$$
-L_q=\lambda W_q,
-\qquad
-L=\lambda W
-$$
-
-<div class="warn">
-
-No se debe modelar $c$ servidores como uno solo de tasa $c\mu$: esa simplificación cambia la distribución del tiempo de servicio y la probabilidad de espera.
-
-</div>
-
----
-
-## Ejemplo $M/M/2$
-
-Use $\lambda=6\ \mathrm h^{-1}$, $c=2$ y $\mu=4\ \mathrm h^{-1}$ por servidor.
-
-$$
-a=\frac{6}{4}=1.5,
-\qquad
-\rho=\frac{6}{8}=0.75
-$$
-
-$$
-\pi_0=\left[1+1.5+\frac{1.5^2}{2(1-0.75)}\right]^{-1}
-=\frac{1}{7}
-$$
-
-$$
-C(2,1.5)=\frac{1.5^2}{2(1-0.75)}\frac{1}{7}
-=\frac{4.5}{7}\approx0.6429
+\begin{aligned}
+K=9\ (B=8):&\quad P_{\mathrm B}=\frac{0.75(0.25)^9}{1-(0.25)^{10}}\approx2.861\times10^{-6},\\
+K=10\ (B=9):&\quad P_{\mathrm B}=\frac{0.75(0.25)^{10}}{1-(0.25)^{11}}\approx7.153\times10^{-7},\\
+K=14\ (B=13):&\quad P_{\mathrm B}=\frac{0.75(0.25)^{14}}{1-(0.25)^{15}}\approx2.794\times10^{-9}.
+\end{aligned}
 $$
 
 ---
 
-## Completar el ejemplo $M/M/2$
+## Ejemplo $M/M/1/K$: capacidad
+
+Para $K=9$, $P_{\mathrm B}\approx2.861\times10^{-6}>10^{-6}$. Para $K=10$, $P_{\mathrm B}\approx7.153\times10^{-7}\leq10^{-6}$.
+
+**Capacidad $K$.** Se elige el menor $K$ con $P_{\mathrm B}=\pi_K\leq10^{-6}$:
 
 $$
-W_q=\frac{9/14}{8-6}\ \mathrm h
-=\frac{9}{28}\ \mathrm h\approx0.3214\ \mathrm h
+K=10
 $$
 
-$$
-W=\left(\frac{9}{28}+\frac{1}{4}\right)\mathrm h
-=\frac{4}{7}\ \mathrm h\approx0.5714\ \mathrm h
-$$
+**Puestos de espera $B$.** Con $B=K-1$, porque el paquete en servicio ocupa un lugar:
 
 $$
-L_q=6\left(\frac{9}{28}\right)\approx1.9286
+B=10-1=9
 $$
-
-$$
-L=6\left(\frac{4}{7}\right)\approx3.4286
-$$
-
-Las unidades permiten detectar errores: dividir una probabilidad por una tasa produce tiempo.
-
----
-
-## Qué significa Erlang C
-
-En el ejemplo $M/M/2$, el $64.29\%$ de las solicitudes debe esperar.
-
-El promedio $W_q=0.3214\ \mathrm h$ incluye a quienes no esperan. Con atención FCFS, entre quienes sí esperan:
-
-$E[\,\cdot\,]$ denota esperanza y $\mid$ significa “condicionado a”.
-
-$$
-E[T_q\mid T_q>0]=\frac{1}{c\mu-\lambda}=0.5\ \mathrm h.
-$$
-
-La probabilidad de esperar y el tiempo medio entre quienes esperan describen resultados distintos. Un SLA puede limitar cualquiera de ellos.
-
----
-
-## Selección del modelo
-
-<img class="diagram" src="images/decision-colas.png" alt="Condiciones de uso de Little, M/M/1, M/M/1/K y M/M/c">
-
-Si los supuestos no se sostienen, no basta con sustituir tasas en una fórmula. Debemos cambiar el modelo o usar simulación.
-
----
-
-## Preguntas para elegir el modelo
-
-Preguntas en orden:
-
-1. ¿Solo se necesitan promedios relacionados? Use Little.
-2. ¿Las llegadas son Poisson y los servicios exponenciales?
-3. ¿Cuántos servidores existen?
-4. ¿La capacidad es finita?
-5. Si la capacidad es infinita, ¿se cumple la condición de estabilidad?
-
----
-
-## Diseñar para un objetivo medio de latencia
-
-Llame $w_{\max}$ al tiempo medio máximo permitido. En $M/M/1$, si se exige $W\leq w_{\max}$:
-
-$$
-\frac{1}{\mu-\lambda}\leq w_{\max}
-\quad\Longrightarrow\quad
-\mu\geq\lambda+\frac{1}{w_{\max}}.
-$$
-
-Con $\lambda=18\ \mathrm{solicitudes}\,\mathrm{min}^{-1}$ y $w_{\max}=4\ \mathrm s$, necesitamos $\mu\geq33\ \mathrm{solicitudes}\,\mathrm{min}^{-1}$.
-
-El tiempo medio de servicio debe ser como máximo $60/33=1.818\ \mathrm s$. No basta con que la tasa supere apenas las llegadas.
-
----
-
-## Un promedio no es un percentil
-
-Un SLA puede exigir que el $95\%$ de las solicitudes responda antes del umbral $w$. Sea $W_{\mathrm{cliente}}$ el tiempo de respuesta de una solicitud. Usamos $\Pr(\cdot)$ para una probabilidad, $e$ para el número de Euler y $\ln$ para el logaritmo natural.
-
-En $M/M/1$ estable con disciplina FCFS, la probabilidad de exceder $w$ es:
-
-$$
-\Pr(W_{\mathrm{cliente}}>w)=e^{-(\mu-\lambda)w}.
-$$
-
-El percentil 95 es $w_{95}=\ln(20)/(\mu-\lambda)$.
-
-Con $\lambda=18\ \mathrm{min}^{-1}$ y $\mu=24\ \mathrm{min}^{-1}$, el promedio es $10\ \mathrm s$ y el percentil 95 es $29.96\ \mathrm s$.
-
----
-
-## Diseño con varios servidores
-
-Para $M/M/c$ no despejamos $c$ como una tasa continua. Probamos números enteros de servidores.
-
-1. Comience con $c$ tal que $\lambda<c\mu$.
-2. Calcule Erlang C y el tiempo medio de espera.
-3. Compare la probabilidad o el tiempo medio con el requisito correspondiente.
-4. Aumente $c$ si no cumple y revise el costo.
-
-La primera configuración estable puede no satisfacer el SLA. La estabilidad es una condición de existencia, no una medida de calidad.
-
----
-
-## Validar el modelo con datos
-
-Antes de recomendar capacidad, contraste los supuestos:
-
-- compare la tasa de llegada entre ventanas, no solo el promedio diario.
-- revise la distribución y variabilidad de los tiempos de servicio.
-- identifique pérdidas, reintentos, prioridades y límites de memoria.
-- mida $L$ y $W$ con la misma frontera y compruebe Little.
-
-Ráfagas correlacionadas, tiempos casi constantes o cambios de capacidad pueden requerir otros modelos o simulación.
-
----
-
-## Ejercicio: dimensionar un servicio
-
-Una interfaz recibe solicitudes Poisson a tasa $\lambda=18\ \mathrm{min}^{-1}$. Un servidor atiende en tiempo exponencial medio de $2.5\ \mathrm s$.
-
-1. Justifique el modelo.
-2. Calcule $\mu$ y $\rho$.
-3. Determine $L$, $L_q$, $W$ y $W_q$.
-4. Si se exige $W\le4\ \mathrm s$, ¿cumple?
-5. Indique una limitación del modelo.
-
----
-
-## Solución del ejercicio
-
-Con unidades en minutos:
-
-$$
-\mu=\frac{60}{2.5}=24\ \mathrm{min}^{-1},
-\qquad
-\rho=\frac{18}{24}=0.75
-$$
-
-$$
-L=\frac{18}{24-18}=3,
-\qquad
-L_q=\frac{18^2}{24(24-18)}=2.25
-$$
-
-$$
-W=\frac{1}{6}\ \mathrm{min}=10\ \mathrm s
-$$
-
-$$
-W_q=10-2.5=7.5\ \mathrm s
-$$
-
-No cumple $W\le4\ \mathrm s$. Una limitación es suponer servicios exponenciales independientes de la carga.
-
----
-
-## Comprobación computacional
-
-El programa `codigo/queue_models.py` verifica $M/M/1$, $M/M/1/K$ y $M/M/c$.
-
-Antes de comparar, revise unidades de tiempo, capacidad y número de servidores.
-
-Compruebe $L=\lambda_{\mathrm e}W$ y $L_q=\lambda_{\mathrm e}W_q$. Si no coinciden, quizá se usó la tasa ofrecida en vez de la admitida.
-
----
-
-## Errores frecuentes
-
-| Error | Corrección |
-|---|---|
-| Mezclar segundos y minutos | Convierta antes de calcular $\rho$ |
-| Usar fórmulas de capacidad infinita sin revisar estabilidad | Verifique $\lambda<c\mu$ |
-| Confundir $L$ con $L_q$ | $L$ incluye servicio. $L_q$ sólo espera |
-| Usar $\lambda$ si existe bloqueo | Use $\lambda_{\mathrm e}$ en Little |
-| Dimensionar solo para estabilidad | Compare la espera con el requisito de servicio |
-
----
-
-## Notación para estados de capacidad
-
-Los subíndices $N$, $D$ y $F$ representan los estados normal, degradado y de falla, respectivamente.
-
-- $\pi_N$, $\pi_D$ y $\pi_F$ son sus probabilidades estacionarias.
-- $\mu_N$, $\mu_D$ y $\mu_F$ son sus tasas de servicio.
-- $W_N$ y $W_D$ son los tiempos medios de respuesta en los estados normal y degradado. En falla no hay servicio.
-
----
-
-## Promediar una métrica por estado
-
-Para un estado $i$, $\pi_i$ es su probabilidad estacionaria y $r_i$ la recompensa por unidad de tiempo asignada a la métrica en ese estado. El promedio de largo plazo es:
-
-$$
-\overline r=\sum_i\pi_i r_i.
-$$
-
-Para medir la fracción de tiempo que se cumple un objetivo, asigne $r_i=1$ a los estados que lo cumplen y $r_i=0$ a los demás. Un promedio de respuesta solo durante la operación se calcula aparte, excluyendo la falla.
-
----
-
-## La capacidad depende del estado
-
-<img class="diagram" src="images/estado-capacidad-sla.png" alt="La misma carga produce distintos tiempos de respuesta y resultados de SLA en los estados normal, degradado y de falla">
-
-La disponibilidad identifica cuánto tiempo ocupa cada estado. El modelo de filas indica qué experiencia recibe cada solicitud cuando el servicio está operativo.
-
----
-
-## Capacidad normal y degradada
-
-Un servicio tiene dos estados operativos y uno de falla. Los cambios de estado son lentos. En estado normal atiende $50\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$ y en estado degradado $25\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$. La carga es $20\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$.
-
-Como aproximación, tratamos cada estado como una fila $M/M/1$ en equilibrio:
-
-$$
-W_N=\frac{1}{50-20}=0.0333\ \mathrm s,
-\qquad W_D=\frac{1}{25-20}=0.2\ \mathrm s.
-$$
-
-Los dos estados entregan servicio, pero tienen tiempos de respuesta muy distintos. Debemos combinar disponibilidad y rendimiento.
-
----
-
-## Cumplimiento de un objetivo de latencia
-
-Representamos los cambios entre estados del servicio mediante una cadena de Markov de tiempo continuo (CTMC), un modelo que describe estados y tasas de transición. Sus probabilidades estacionarias son $(\pi_F,\pi_D,\pi_N)=(0.02,0.18,0.80)$.
-
-Si el SLA exige tiempo medio menor que $0.1\ \mathrm s$, solo el estado normal $N$ cumple. Asignamos valor uno a los estados que cumplen y cero a los demás. La fracción de tiempo que alcanza el objetivo es:
-
-$$
-A_{\mathrm{SLA}}=\pi_N=0.80.
-$$
-
-La disponibilidad de conectividad es $\pi_D+\pi_N=0.98$.
-
----
-
-## Tiempo medio de respuesta durante la operación
-
-Suponemos llegadas Poisson independientes del estado y rechazadas durante la falla. Para aproximar la respuesta de las solicitudes admitidas, ponderamos los tiempos de los estados operativos por sus probabilidades:
-
-$$
-\overline W_{\mathrm{op}}\approx\frac{0.18(0.2)+0.80(0.0333)}{0.98}=0.0639\ \mathrm s.
-$$
-
-El resultado aproxima el tiempo medio de respuesta de las solicitudes admitidas cuando los cambios de capacidad son lentos.
-
----
-
-## Límites de la aproximación
-
-El promedio por estados supone que cada fila alcanza aproximadamente su equilibrio antes de que cambie la capacidad.
-
-También supone llegadas independientes del estado y rechazos durante la caída. Si los clientes se acumulan, el estado debe incluir el número en espera.
-
-Si el estado degradado tiene tasa de servicio $\mu_D\leq\lambda$, no podemos asignarle el promedio estacionario $1/(\mu_D-\lambda)$.
-
-Un análisis exacto puede requerir una cadena conjunta de condición del servicio y ocupación, o una simulación que conserve la acumulación entre estados.
-
----
-
-## Ejercicio de diseño: comparar mejoras
-
-Para el servicio anterior, compare dos cambios:
-
-1. mejorar la capacidad degradada de $25$ a $40\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$.
-2. reducir su probabilidad estacionaria de $0.18$ a $0.08$, aumentando la normal de $0.80$ a $0.90$.
-
-Determine qué cambia en la disponibilidad de conectividad, la fracción que cumple el SLA y el promedio aproximado de respuesta.
-
-Justifique si conviene recuperar capacidad o reducir la frecuencia de degradación. Declare los supuestos de la combinación de modelos.
-
----
-
-## Ejercicio de diseño: resultados
-
-| Configuración | Conectividad | Cumplimiento por estado | $\overline W_{\mathrm{op}}$ |
-|---|---:|---:|---:|
-| original | $0.98$ | $0.80$ | $0.0639\ \mathrm s$ |
-| capacidad degradada de $40$ | $0.98$ | $0.98$ | $0.0364\ \mathrm s$ |
-| menos degradación | $0.98$ | $0.90$ | $0.0469\ \mathrm s$ |
-
-Ambas alternativas mantienen la conectividad. La primera consigue que también el estado degradado cumpla el objetivo medio de $0.1$ s.
-
-La elección necesita además costos y evidencia de las tasas y capacidades propuestas.
-
----
-
-## De los modelos a las decisiones de diseño
-
-La confiabilidad pregunta si se completa una misión. La disponibilidad mide cuánto tiempo se ofrece el servicio. La teoría de filas evalúa cómo responde bajo carga.
-
-- Delimite la frontera y mida tasa, número y tiempo sobre la misma población.
-- Justifique los supuestos del modelo y revise estabilidad y unidades.
-- Dimensione capacidad frente a latencia, bloqueo y costo.
-- Evalúe disponibilidad y rendimiento en conjunto para determinar si se cumple el SLA.
-
-Estos modelos convierten mediciones y requisitos del servicio en decisiones de diseño y operación.
-
----
-
-## Referencias
-
-1. J. F. Shortle, J. M. Thompson, D. Gross y C. M. Harris, *Fundamentals of Queueing Theory*, 5.ª ed., Wiley, 2018, capítulos 1 a 3 y secciones 7.7 y 9.3.
-2. K. S. Trivedi, *Probability and Statistics with Reliability, Queuing, and Computer Science Applications*, 2.ª ed., Wiley, 2002, capítulos 8 y 9.
-3. D. P. Bertsekas y R. G. Gallager, *Data Networks*, 2.ª ed., Prentice Hall, 1992, cap. 3.
-4. J. M. Martínez, *Continuous Time Markov Chains*, material histórico TEL211, páginas 41 a 50.
-5. L. A. Lizama, *Teoría de Colas TEL211*, material histórico USM. Kendall, Little y ejemplo de dimensionamiento del gateway.
