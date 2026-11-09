@@ -879,3 +879,491 @@ $$
 $$
 B=10-1=9
 $$
+
+---
+
+## Varios servidores: $M/M/c$
+
+<div class="bridge">
+
+Con un servidor, una solicitud espera si el servidor está ocupado. Con $c$ servidores, espera solo si los $c$ están ocupados.
+
+</div>
+
+Un modelo $M/M/c$ tiene una fila común y $c$ servidores idénticos. Las llegadas siguen un proceso de Poisson con tasa $\lambda$, y cada servidor atiende con tiempos exponenciales de media $1/\mu$.
+
+En la notación de Kendall, la capacidad y la población son ilimitadas y la disciplina es FCFS: $M/M/c/\infty/\infty/\mathrm{FCFS}$.
+
+---
+
+## Modelo $M/M/c$
+
+<img class="diagram" src="images/mmc-modelo.png" alt="Llegadas con tasa lambda entran a una fila común que alimenta c servidores en paralelo, cada uno con tasa mu, y las salidas se juntan a la derecha">
+
+Una solicitud entra a servicio en cuanto queda libre algún servidor. Si los $c$ servidores están ocupados, la solicitud espera en la fila común.
+
+---
+
+## Tasa total de salida
+
+La tasa total de salida es la rapidez con que el sistema completa servicios. Cada servidor ocupado completa servicios a tasa $\mu$, así que la tasa total suma $\mu$ por cada **servidor ocupado**:
+
+$$
+\text{tasa total de salida}=\min(n,c)\,\mu
+$$
+
+Aquí $n$ es el número de solicitudes en el sistema, y $\min(n,c)$ es el número de servidores ocupados.
+
+- Si $n<c$, hay $c-n$ servidores libres y ninguna solicitud espera.
+- Si $n\geq c$, los $c$ servidores están ocupados. La tasa se mantiene en $c\mu$, y las solicitudes adicionales forman fila.
+
+---
+
+## Servidores ocupados según $n$
+
+<img class="diagram" src="images/estados-servidores-mmc.png" alt="Seis recuadros para n igual a 0 a 5 con tres servidores: en cada uno se muestran los servidores ocupados, los libres, las solicitudes en fila y la tasa total de salida">
+
+Con $c=3$, cada recuadro muestra los servidores ocupados, las solicitudes en fila y la tasa total de salida. A partir de $n=3$, la tasa deja de crecer, pero la fila sí aumenta.
+
+---
+
+## Ejemplo de tasa total de salida
+
+<div class="example">
+
+- Dado: $c=3$, $\mu=4$ por unidad de tiempo y $n=5$.
+- Fórmula: $\min(n,c)\,\mu$.
+- Sustitución: $\min(5,3)\cdot4=3\cdot4$.
+- Resultado: $12$ por unidad de tiempo, con $5-3=2$ solicitudes en fila.
+
+</div>
+
+Con $n=2$, en cambio, la tasa es $2\cdot4=8$ por unidad de tiempo, y ninguna solicitud espera.
+
+Agregar solicitudes cuando $n\geq c$ no aumenta la tasa de salida. Solo aumenta la fila.
+
+---
+
+## Tráfico ofrecido $a$
+
+Cada solicitud necesita en promedio $1/\mu$ unidades de tiempo de un servidor. Si llegan $\lambda$ solicitudes por unidad de tiempo, el trabajo que llega se mide con el tráfico ofrecido:
+
+$$
+a=\frac{\lambda}{\mu}
+$$
+
+Al dividir, las unidades de tiempo se cancelan y $a$ cuenta servidores. Se mide en Erlangs: 1 Erlang equivale a un servidor ocupado todo el tiempo.
+
+<div class="example">
+
+- Dado: $\lambda=6$ y $\mu=4$, por unidad de tiempo.
+- Sustitución: $a=6/4$.
+- Resultado: $a=1.5$ Erlangs.
+
+</div>
+
+---
+
+## Qué significa $a$ con varios servidores
+
+<div class="columns">
+<div>
+
+**Con $c=1$**
+
+- $a=1.5$ supera la capacidad.
+- La carga pide más servidores de los que hay.
+- La fila crece sin límite.
+
+</div>
+<div>
+
+**Con $c=2$**
+
+- $a=1.5$ cabe en la capacidad.
+- Sobran $0.5$ servidores.
+- La fila no crece sin límite.
+
+</div>
+</div>
+
+$a$ no cambia con $c$: es la carga. Lo que cambia es cuántos servidores hay para atenderla. Por eso, la estabilidad exige $a<c$.
+
+---
+
+## Carga por servidor $\rho$
+
+La carga por servidor reparte el tráfico entre los $c$ servidores:
+
+$$
+\rho=\frac{a}{c}=\frac{\lambda}{c\mu}
+$$
+
+<div class="columns">
+<div>
+
+**Un servidor ($M/M/1$)**
+
+$\rho=\lambda/\mu$ es la fracción de tiempo que el servidor está ocupado.
+
+</div>
+<div>
+
+**Varios servidores ($M/M/c$)**
+
+$\rho=\lambda/(c\mu)$ es la fracción de tiempo que, en promedio, ocupa cada servidor.
+
+</div>
+</div>
+
+Con $c=1$, ambas fórmulas coinciden. Con $c=2$ y $a=1.5$, $\rho=0.75$: cada servidor está ocupado el $75\%$ del tiempo.
+
+---
+
+## Condición de estabilidad $\lambda<c\mu$
+
+La fila tiene régimen estable si:
+
+$$
+\boxed{\lambda<c\mu\quad\Longleftrightarrow\quad\rho<1}
+$$
+
+Para ver de dónde sale, se considera la fila cuando los $c$ servidores están ocupados. Cada llegada suma una solicitud al sistema. Cada servidor ocupado completa $\mu$ solicitudes por unidad de tiempo, así que la salida total es $c\mu$. El número de solicitudes cambia en promedio a razón de
+
+$$
+\lambda-c\mu\ \text{solicitudes por unidad de tiempo}
+$$
+
+Si $\lambda>c\mu$, la fila crece sin límite. Si $\lambda<c\mu$, sube y baja, pero no crece sin límite.
+
+---
+
+## No es $\lambda<\mu$
+
+<div class="warn">
+
+Usar $\mu$ en lugar de $c\mu$ es un error frecuente. Con $c=2$ y $\mu=4$, la condición $\lambda<\mu$ exige $\lambda<4$. Con $\lambda=6$, esa regla rechaza un sistema que sí es estable.
+
+</div>
+
+La condición correcta es $\lambda<c\mu=8$. Con $\lambda=6$ se cumple, aunque la carga supera la tasa de un solo servidor.
+
+---
+
+## Capacidad total frente a la carga
+
+<img class="diagram" src="images/capacidad-carga-mmc.png" alt="Dos barras frente a una capacidad total de 8: con 6 la carga cabe, con 9 sobra 1 que se acumula en la fila">
+
+La figura compara la tasa de llegada con la capacidad total, $c\mu=8$, que son dos servidores con $\mu=4$ cada uno. Con $\lambda=6$, toda la carga se atiende. Con $\lambda=9$, el sistema atiende como máximo $8$, y el exceso de $1$ por unidad de tiempo se acumula en la fila.
+
+---
+
+## Estados y cadena de nacimiento y muerte
+
+<img class="diagram" src="images/nacimiento-muerte-mmc.png" alt="Estados 0 a 4 unidos por flechas: hacia la derecha con tasa lambda, y hacia la izquierda con tasa mu desde el estado 1 y tasa 2 mu desde los estados 2, 3 y 4">
+
+Cada llegada sube el estado $n$ en una unidad, a tasa $\lambda$. Cada salida lo baja, a tasa $\min(n,c)\mu$. Con $c=2$, la tasa de bajada crece porque hay más servidores ocupados: con $n=1$ trabaja un servidor ($\mu$), con $n=2$ trabajan los dos ($2\mu$). Desde $n=2$, los dos servidores están ocupados, así que la tasa se queda en $2\mu$, aunque lleguen más solicitudes.
+
+---
+
+## Balance entre estados vecinos
+
+En un proceso de nacimiento y muerte, $\lambda_n$ es la tasa de subida desde el estado $n$, y $\mu_n$ es la tasa de bajada desde $n$. En $M/M/c$, $\lambda_n=\lambda$ y $\mu_n=\min(n,c)\mu$.
+
+En equilibrio, el flujo que sube de $n$ a $n+1$ iguala al flujo que baja de $n+1$ a $n$:
+
+$$
+\pi_n\lambda_n=\pi_{n+1}\mu_{n+1}
+$$
+
+Cada flujo es la probabilidad del estado de origen por su tasa de transición. Con este balance, $\pi_{n+1}$ se obtiene a partir de $\pi_n$.
+
+---
+
+## Distribución para $n<c$
+
+Para $n<c$, la tasa de bajada desde $n$ es $n\mu$, porque hay $n$ servidores ocupados. El balance entre $n-1$ y $n$ da:
+
+$$
+\pi_n=\frac{\lambda}{n\mu}\,\pi_{n-1}=\frac{a}{n}\,\pi_{n-1}
+$$
+
+Repitiendo el paso desde $\pi_0$ hasta $n$:
+
+$$
+\pi_n=\frac{a}{1}\cdot\frac{a}{2}\cdots\frac{a}{n}\,\pi_0=\frac{a^n}{n!}\,\pi_0
+$$
+
+---
+
+## Origen del factorial en $\pi_n$
+
+Cada paso del balance aporta un factor $a/k$, con $k=1,\ldots,n$. El factorial no viene de la normalización: es el producto de los denominadores,
+
+$$
+1\cdot2\cdots n=n!
+$$
+
+<div class="example">
+
+- Dado: $c=3$ y $a=1.5$.
+- Sustitución: $\pi_2=\frac{1.5^2}{2!}\,\pi_0$.
+- Resultado: $\pi_2=1.125\,\pi_0$.
+
+</div>
+
+---
+
+## Distribución para $n\geq c$
+
+Desde $n=c$, todos los servidores están ocupados y la tasa de bajada se queda en $c\mu$. Cada solicitud adicional multiplica la probabilidad por $\rho=\lambda/(c\mu)$, así que:
+
+$$
+\pi_n=\pi_0\,\frac{a^c}{c!}\,\rho^{\,n-c}
+\qquad(n\geq c)
+$$
+
+Con $\rho<1$, las probabilidades decrecen de forma geométrica al crecer $n$.
+
+<div class="example">
+
+- Dado: $c=2$, $a=1.5$ y $\rho=0.75$.
+- Sustitución: $\pi_3=\frac{1.5^2}{2!}\cdot0.75\,\pi_0$.
+- Resultado: $\pi_3=0.84375\,\pi_0$.
+
+</div>
+
+---
+
+## Normalización y $\pi_0$
+
+Las probabilidades deben sumar $1$. Para $n<c$, $\pi_n=\frac{a^n}{n!}\,\pi_0$. Para $n\geq c$, $\pi_n=\pi_0\,\frac{a^c}{c!}\,\rho^{\,n-c}$. Con el cambio $k=n-c$, el exponente $n-c$ pasa a ser $k$, y la suma empieza en $k=0$ porque $n=c$ corresponde a $k=0$:
+
+$$
+\sum_{n\geq c}\pi_n=\pi_0\,\frac{a^c}{c!}\sum_{k=0}^{\infty}\rho^{k}
+$$
+
+Sumando los estados $n<c$ y $n\geq c$, e igualando a $1$:
+
+$$
+\pi_0\left[\sum_{n=0}^{c-1}\frac{a^n}{n!}+\frac{a^c}{c!}\sum_{k=0}^{\infty}\rho^{k}\right]=1
+$$
+
+---
+
+## Serie geométrica de la normalización
+
+Si $\rho\geq1$, la suma diverge y no hay distribución estacionaria. Si $\rho<1$, esta converge a $\sum_{k=0}^{\infty}\rho^{k}=\frac{1}{1-\rho}$
+Sustituyendo en la fórmula anterior:
+
+$$
+\pi_0=\left[\sum_{n=0}^{c-1}\frac{a^n}{n!}+\frac{a^c}{c!}\,\frac{1}{1-\rho}\right]^{-1}
+$$
+
+Habiendo obtenido $\pi_0$, luego es posible obtener cualquier probabilidad $\pi_n$.
+
+---
+
+## Distribución de $n$ con $c=2$
+
+<img class="diagram" src="images/pi-n-mmc.png" alt="Barras de probabilidad pi_n para n igual a 0 a 6 con c igual a 2 y a igual a 1.5. Las barras desde n igual a 2 suman 0.6429">
+
+Con $c=2$ y $a=1.5$, las barras naranjas son los estados en que la solicitud que llega encuentra los dos servidores ocupados. Su suma es la probabilidad de esperar.
+
+---
+
+## Probabilidad de esperar: Erlang C
+
+Sea $T_q$ el tiempo de espera de una solicitud. Una solicitud espera si, al llegar, encuentra $c$ o más solicitudes en el sistema. Como las llegadas son Poisson, ven el sistema con las probabilidades $\pi_n$ (propiedad PASTA). Por tanto:
+
+$$
+C(c,a)=P(T_q>0)=\sum_{n=c}^{\infty}\pi_n=\frac{a^c}{c!}\,\frac{1}{1-\rho}\,\pi_0
+$$
+
+La última igualdad usa la suma geométrica de $\rho^{\,n-c}$ con $n\geq c$. $C(c,a)$ es la fórmula de Erlang C.
+
+---
+
+## Ejemplo $M/M/2$
+
+Se toma la hora como unidad de tiempo, con $\lambda=6$, $c=2$ y $\mu=4$ por hora. Primero se calculan el tráfico ofrecido y la carga por servidor:
+
+$$
+a=\frac{6}{4}=1.5,
+\qquad
+\rho=\frac{6}{8}=0.75
+$$
+
+Con esos valores, $\pi_0$ se obtiene de la normalización:
+
+$$
+\pi_0=\left[1+1.5+\frac{1.5^2}{2(1-0.75)}\right]^{-1}
+=\frac{1}{7}
+$$
+
+La probabilidad de esperar es:
+
+$$
+C(2,1.5)=\frac{1.5^2}{2(1-0.75)}\,\frac{1}{7}
+=\frac{4.5}{7}\approx0.6429
+$$
+
+---
+
+## Espera promedio sobre todas las solicitudes
+
+Sea $T_q$ el tiempo que una solicitud pasa en la fila antes de ser atendida. Con $c=2$, $\lambda=6$ y $\mu=4$ por hora, $P(T_q>0)=C(2,1.5)=\frac{9}{14}\approx0.6429$.
+
+De cada 100 solicitudes, en promedio $64.29$ encuentran los dos servidores ocupados y esperan. Las otras $35.71$ encuentran un servidor libre y tienen $T_q=0$.
+
+$W_q$ es el promedio de $T_q$ sobre las 100. Las que no esperan aportan cero a la suma, pero sí cuentan en el promedio.
+
+---
+
+## Espera media de quienes esperan
+
+La espera media de quienes esperan depende de qué tan rápido se vacía la fila.
+
+Mientras los $c$ servidores están ocupados, la fila pierde en promedio $c\mu-\lambda$ solicitudes por unidad de tiempo. Con $c=2$, $\lambda=6$ y $\mu=4$ por hora, eso son $8-6=2$ solicitudes por hora.
+
+Por intuición, la espera de quien espera es del orden de $\frac{1}{c\mu-\lambda}=0.5\ \mathrm h$. Cuanta más capacidad libre hay, más rápido se vacía la fila y más corta es la espera.
+
+---
+
+## De Erlang C a $W_q$
+
+Se separan las solicitudes según si esperan. Cada grupo aporta su fracción multiplicada por su espera media:
+
+| Grupo | Fracción | Espera media | Aporte a $W_q$ |
+|---|---|---|---|
+| No espera | $0.3571$ | $0\ \mathrm h$ | $0\ \mathrm h$ |
+| Espera | $0.6429$ | $0.5\ \mathrm h$ | $0.3214\ \mathrm h$ |
+
+Es la ley de la esperanza total:
+
+$$
+W_q=P(T_q=0)\cdot0+P(T_q>0)\cdot E[T_q\mid T_q>0]
+$$
+
+Con $P(T_q>0)=C(c,a)$ y $E[T_q\mid T_q>0]=\frac{1}{c\mu-\lambda}$:
+
+$$
+W_q=\frac{9}{14}\cdot\frac{1}{2}\ \mathrm h=\frac{9}{28}\ \mathrm h\approx0.3214\ \mathrm h
+$$
+
+---
+
+## Métricas de $M/M/c$
+
+Con $W_q$ calculado, el tiempo medio en el sistema suma el servicio:
+
+$$
+W=W_q+\frac{1}{\mu}
+$$
+
+En $M/M/c$ no hay bloqueo, así que la tasa admitida es $\lambda$. La ley de Little da:
+
+$$
+L_q=\lambda W_q,
+\qquad
+L=\lambda W
+$$
+
+---
+
+<!-- _class: compact -->
+
+## Completar el ejemplo $M/M/2$
+
+Con $W_q=C(c,a)/(c\mu-\lambda)$ y $c\mu-\lambda=8-6=2\ \mathrm h^{-1}$:
+
+$$
+W_q=\frac{9/14}{8-6}\ \mathrm h
+=\frac{9}{28}\ \mathrm h\approx0.3214\ \mathrm h
+$$
+
+Con $W=W_q+1/\mu$:
+
+$$
+W=\left(\frac{9}{28}+\frac{1}{4}\right)\mathrm h
+=\frac{4}{7}\ \mathrm h\approx0.5714\ \mathrm h
+$$
+
+Con $L_q=\lambda W_q$ y $L=\lambda W$:
+
+$$
+L_q=6\left(\frac{9}{28}\right)\approx1.9286
+\qquad
+L=6\left(\frac{4}{7}\right)\approx3.4286
+$$
+
+Las unidades ayudan a detectar errores. $C(c,a)$ es adimensional y $c\mu-\lambda$ está en $\mathrm h^{-1}$, así que $W_q$ queda en horas.
+
+---
+
+## Qué significa Erlang C
+
+Con $c=2$, el $64.29\%$ de las solicitudes encuentra los dos servidores ocupados y espera. El promedio $W_q=0.3214\ \mathrm h$ incluye también a quienes no esperan.
+
+Una solicitud que espera tiene, en promedio, una espera de $1/(c\mu-\lambda)$, si la disciplina es FCFS y los servicios son exponenciales:
+
+$$
+E[T_q\mid T_q>0]=\frac{1}{c\mu-\lambda}=0.5\ \mathrm h
+$$
+
+Comprobación: $C(2,1.5)\,E[T_q\mid T_q>0]=\frac{9}{14}\cdot0.5\ \mathrm h=\frac{9}{28}\ \mathrm h=W_q$.
+
+La probabilidad de esperar y el tiempo medio entre quienes esperan describen resultados distintos. Según el objetivo del servicio, puede interesar cualquiera de los dos.
+
+---
+
+## Un servidor rápido no equivale a $c$ servidores
+
+<div class="columns">
+<div>
+
+**Un servidor de tasa $c\mu$**
+
+- Servicio medio por solicitud: $1/(c\mu)=0.125\ \mathrm h$.
+- $P(T_q>0)=\rho=0.75$.
+- $W_q=0.375\ \mathrm h$.
+
+</div>
+<div>
+
+**$c$ servidores de tasa $\mu$**
+
+- Servicio medio por solicitud: $1/\mu=0.25\ \mathrm h$.
+- $P(T_q>0)=C(2,1.5)\approx0.6429$.
+- $W_q\approx0.3214\ \mathrm h$.
+
+</div>
+</div>
+
+Con $c=2$, $\lambda=6$ y $\mu=4$ por hora, el modelo de un servidor rápido sobrestima la espera. Con dos servidores, una solicitud espera solo si ambos están ocupados. Con un solo servidor, espera cada vez que el único servidor está ocupado.
+
+---
+
+## Acuerdo de nivel de servicio (SLA)
+
+<div class="callout">
+
+**SLA** (*Service Level Agreement*): acuerdo escrito entre quien presta un servicio y quien lo usa, que fija metas medibles de calidad.
+
+</div>
+
+Un SLA tiene tres partes: la métrica, el umbral y la población sobre la que se exige.
+
+<div class="example">
+
+- Dado: el $80\%$ de las llamadas se atiende en $20\ \mathrm s$ o menos.
+- Métrica: tiempo de atención $T$.
+- Umbral: $T\leq20\ \mathrm s$.
+- Población: el $80\%$ de las llamadas.
+
+</div>
+
+El SLA se cumple si la población exigida respeta el umbral. Por eso, un SLA sobre el tiempo medio y otro sobre el $95\%$ de las solicitudes no exigen lo mismo.
+
+Más información: [Acuerdo de nivel de servicio (Wikipedia)](https://es.wikipedia.org/wiki/Acuerdo_de_nivel_de_servicio).
+
