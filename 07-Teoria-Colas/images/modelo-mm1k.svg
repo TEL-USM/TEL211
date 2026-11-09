@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="130" viewBox="0 0 520 130" role="img" aria-label="Capacidad total limitada, con una llegada rechazada cuando el sistema está lleno">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#344054"/>
+    </marker>
+  </defs>
+  <rect x="124" y="15" width="310" height="103" rx="9" fill="#f7f8fa" stroke="#6b7280" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="278" y="33" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#344054">Sistema lleno</text>
+  <rect x="14" y="48" width="76" height="32" rx="5" fill="#fff2cc" stroke="#b7791f" stroke-width="2"/>
+  <text x="52" y="69" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#5b4218">Llegada</text>
+  <line x1="90" y1="64" x2="108" y2="64" stroke="#344054" stroke-width="2.5"/>
+  <path d="M108 55 L122 73 M122 55 L108 73" fill="none" stroke="#b85450" stroke-width="3"/>
+  <text x="52" y="101" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#8a3b38">Rechazada</text>
+  <g fill="#e8f3fb" stroke="#2f6f9f" stroke-width="2">
+    <rect x="148" y="52" width="30" height="28" rx="4"/>
+    <rect x="188" y="52" width="30" height="28" rx="4"/>
+  </g>
+  <text x="183" y="101" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#344054">En espera</text>
+  <line x1="220" y1="66" x2="262" y2="66" stroke="#344054" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="269" y="46" width="143" height="42" rx="7" fill="#d5e8d4" stroke="#2f855a" stroke-width="2"/>
+  <rect x="280" y="56" width="24" height="22" rx="3" fill="#e8f3fb" stroke="#2f6f9f" stroke-width="1.5"/>
+  <text x="352" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#243b2b">Servidor</text>
+</svg>

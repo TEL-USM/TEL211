@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="130" viewBox="0 0 520 130" role="img" aria-label="Fila ilimitada hacia un servidor">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#344054"/>
+    </marker>
+  </defs>
+  <g fill="#e8f3fb" stroke="#2f6f9f" stroke-width="2">
+    <rect x="18" y="48" width="28" height="28" rx="4"/>
+    <rect x="55" y="48" width="28" height="28" rx="4"/>
+    <rect x="92" y="48" width="28" height="28" rx="4"/>
+  </g>
+  <text x="20" y="34" font-family="Arial, sans-serif" font-size="15" fill="#344054">Solicitudes</text>
+  <text x="126" y="70" font-family="Arial, sans-serif" font-size="22" fill="#344054">...</text>
+  <line x1="151" y1="62" x2="264" y2="62" stroke="#344054" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="270" y="37" width="105" height="50" rx="8" fill="#d5e8d4" stroke="#2f855a" stroke-width="2"/>
+  <text x="322" y="67" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#243b2b">Servidor</text>
+  <line x1="376" y1="62" x2="448" y2="62" stroke="#344054" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="458" y="67" font-family="Arial, sans-serif" font-size="15" fill="#344054">Salidas</text>
+</svg>
