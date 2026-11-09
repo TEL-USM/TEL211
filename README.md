@@ -23,6 +23,7 @@ bajo carga para fundamentar decisiones de diseño y operación.
 | `04` | Procesos estocásticos y cadenas de Markov en tiempo discreto | [PDF](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.pdf) · [fuente Markdown](04-Procesos-Estocasticos-DTMC/04-procesos-estocasticos-dtmc.md) |
 | `05` | Cadenas de Markov en tiempo continuo, sistemas reparables, prioridades de reparación y disponibilidad | [PDF](05-CTMC-Disponibilidad/05-ctmc-disponibilidad.pdf) · [fuente Markdown](05-CTMC-Disponibilidad/05-ctmc-disponibilidad.md) |
 | `06` | Métricas de confiabilidad, mantenibilidad y disponibilidad, registros operacionales y acuerdos de nivel de servicio | [PDF](06-Metricas-Disponibilidad/06-metricas-disponibilidad.pdf) · [fuente Markdown](06-Metricas-Disponibilidad/06-metricas-disponibilidad.md) |
+| `07` | Teoría de filas: de la carga al tiempo de respuesta. Modelos M/M/1, M/M/1/K y M/M/c | [PDF](07-Teoria-Colas/07-teoria-colas.pdf) · [fuente Markdown](07-Teoria-Colas/07-teoria-colas.md) |
 
 Las fuentes Markdown corresponden a las presentaciones editables. Los PDF son
 las versiones listas para lectura. Los notebooks incluyen cálculos y ejemplos
@@ -35,9 +36,11 @@ reproducibles asociados a las unidades correspondientes.
 | Ayudantía 1 | Distribuciones de probabilidad | [Enunciado](Ayudantías/01-Distribuciones-Probabilidad/Ayudantía_1.pdf) · [Ayudantía desarrollada](Ayudantías/01-Distribuciones-Probabilidad/Ayudantia1_TIC_desarrollada.pdf) · [notebook](Ayudantías/01-Distribuciones-Probabilidad/Notebook-Distribuciones-Probabilidad.ipynb) |
 | Ayudantía 2 | Teoría de confiabilidad | [PDF](Ayudantías/02-Teoría-Confiabilidad/Ayudantia2.pdf) |
 | Ayudantía 3 | Diagramas de confiabilidad | [PDF](Ayudantías/03-Diagramas-Confiabilidad/Ayudantia3_TIC.pdf) |
-| Certamen 1 | Preparación y material de apoyo | [Ejercicios tipo certamen](ejercicios/certamen1/ejercicios.pdf) · [formulario](ejercicios/certamen1/formulario-c1.pdf) · [soluciones](ejercicios/certamen1/soluciones.pdf) |
+| Certamen 1 | Preparación, enunciado y solución | [Ejercicios tipo certamen](ejercicios/certamen1/ejercicios.pdf) · [formulario](ejercicios/certamen1/formulario-c1.pdf) · [soluciones](ejercicios/certamen1/soluciones.pdf) · [enunciado](evaluaciones/2026-2/certamenes/certamen1/enunciado/c1.pdf) · [solución](evaluaciones/2026-2/certamenes/certamen1/solucion/c1_sol.pdf) |
+| Certamen 2 | Preparación, enunciado y solución | [Ejercicios tipo certamen](ejercicios/certamen2/ejercicios.pdf) · [formulario](ejercicios/certamen2/formulario-c2.pdf) · [soluciones](ejercicios/certamen2/soluciones.pdf) · [enunciado](evaluaciones/2026-2/certamenes/certamen2/enunciado/c2.pdf) · [solución](evaluaciones/2026-2/certamenes/certamen2/solucion/c2_sol.pdf) |
 | Tarea 1 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea1/enunciado/tarea1.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea1/enunciado/tarea1_notebook.ipynb) |
 | Tarea 2 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea2/enunciado/tarea2.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea2/enunciado/tarea2_notebook.ipynb) |
+| Tarea 3 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea3/enunciado/tarea3.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea3/enunciado/tarea3_notebook.ipynb) · [datos](evaluaciones/2026-2/tareas/tarea3/enunciado/datos/) |
 
 ## Estructura del repositorio
 
@@ -49,8 +52,10 @@ reproducibles asociados a las unidades correspondientes.
 04-Procesos-Estocasticos-DTMC/         Cadenas de Markov en tiempo discreto
 05-CTMC-Disponibilidad/                Cadenas de Markov en tiempo continuo y disponibilidad
 06-Metricas-Disponibilidad/            Métricas de confiabilidad, mantenibilidad y disponibilidad
+07-Teoria-Colas/                       Teoría de filas y tiempo de respuesta
 Ayudantías/                            Material de apoyo
 ejercicios/certamen1/                  Ejercicios y material de preparación para el Certamen 1
+ejercicios/certamen2/                  Ejercicios y material de preparación para el Certamen 2
 evaluaciones/2026-2/                   Tareas y evaluaciones del semestre
 ```
 
