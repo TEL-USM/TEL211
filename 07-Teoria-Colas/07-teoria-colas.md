@@ -1559,7 +1559,7 @@ $$
 
 ---
 
-## ¿Por qué estados de capacidad?
+## Estados de capacidad
 
 Los modelos anteriores suponen capacidad fija. Un servicio real puede estar en estado normal, degradado o de falla, y un solo valor para todo el servicio oculta esos cambios.
 
