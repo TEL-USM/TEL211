@@ -1,6 +1,7 @@
 ---
 marp: true
 math: katex
+lang: es
 paginate: true
 size: 16:9
 style: |
@@ -1344,6 +1345,31 @@ Con $c=2$, $\lambda=6$ y $\mu=4$ por hora, el modelo de un servidor rápido sobr
 
 ---
 
+## Elegir un modelo según el sistema
+
+Dos preguntas sobre el sistema real orientan la elección: cuántos servidores atienden y si hay un límite de solicitudes dentro del sistema.
+
+| | Sin límite de capacidad | Capacidad total $K$ |
+|---|---|---|
+| Un servidor | $M/M/1$ | $M/M/1/K$ |
+| $c$ servidores | $M/M/c$ | $M/M/c/K$ |
+
+Los tres modelos estudiados son ejemplos de una familia más amplia. El cuarto caso, $M/M/c/K$, combina ambos efectos y también existe. Otros modelos cambian las letras de Kendall: por ejemplo, $M/G/1$ admite tiempos de servicio que no son exponenciales.
+
+---
+
+## Cuándo usar $M/M/1$, $M/M/1/K$ y $M/M/c$
+
+| Modelo | Se usa cuando | Ejemplo |
+|---|---|---|
+| $M/M/1$ | Atiende un solo servidor y el espacio de espera es tan amplio que casi no se rechaza nada. Interesa el tiempo de respuesta. | Una interfaz con un procesador y memoria amplia. |
+| $M/M/1/K$ | Atiende un solo servidor y el espacio es limitado: con el sistema lleno, la solicitud se pierde. Interesa la fracción perdida y el espacio necesario. | Una puerta de enlace con un búfer de $K$ paquetes. |
+| $M/M/c$ | Atienden $c$ servidores iguales desde una fila común. Interesa la espera y cuántos servidores hacen falta. | Un centro de llamadas con $c$ agentes. |
+
+En los tres, la letra $M$ supone llegadas Poisson y servicio exponencial. Si los datos no se ajustan, conviene otro modelo de la familia o una simulación.
+
+---
+
 ## Acuerdo de nivel de servicio (SLA)
 
 <div class="callout">
@@ -1352,18 +1378,305 @@ Con $c=2$, $\lambda=6$ y $\mu=4$ por hora, el modelo de un servidor rápido sobr
 
 </div>
 
-Un SLA tiene tres partes: la métrica, el umbral y la población sobre la que se exige.
+Un SLA fija tres cosas:
 
-<div class="example">
-
-- Dado: el $80\%$ de las llamadas se atiende en $20\ \mathrm s$ o menos.
-- Métrica: tiempo de atención $T$.
-- Umbral: $T\leq20\ \mathrm s$.
-- Población: el $80\%$ de las llamadas.
-
-</div>
-
-El SLA se cumple si la población exigida respeta el umbral. Por eso, un SLA sobre el tiempo medio y otro sobre el $95\%$ de las solicitudes no exigen lo mismo.
+- **Métrica:** lo que se mide, como el tiempo de atención.
+- **Umbral:** el valor que debe respetarse.
+- **Cobertura:** qué parte de las solicitudes debe respetar el umbral.
 
 Más información: [Acuerdo de nivel de servicio (Wikipedia)](https://es.wikipedia.org/wiki/Acuerdo_de_nivel_de_servicio).
 
+---
+
+## Ejemplo de SLA
+
+<div class="example">
+
+- Meta: el $80\%$ de las llamadas se atiende en $20\ \mathrm s$ o menos.
+- Métrica: tiempo de atención $T$.
+- Umbral: $T\leq20\ \mathrm s$.
+- Cobertura: el $80\%$ de las llamadas.
+
+</div>
+
+Un SLA sobre el tiempo medio y otro sobre el $95\%$ de las solicitudes no exigen lo mismo. El segundo pide que casi todas respeten el umbral.
+
+---
+
+## Diseñar para un objetivo medio de latencia
+
+Sea $w_{\max}$ el tiempo medio máximo que permite el SLA. En $M/M/1$, $W=\frac{1}{\mu-\lambda}$, así que se exige $W\leq w_{\max}$. Al despejar $\mu$:
+
+$$
+\mu-\lambda\geq\frac{1}{w_{\max}}
+\quad\Longrightarrow\quad
+\mu\geq\lambda+\frac{1}{w_{\max}}
+$$
+
+La capacidad debe superar la carga en al menos $1/w_{\max}$.
+
+---
+
+<!-- _class: compact -->
+
+## Ejemplo: tasa de servicio para un objetivo medio
+
+<div class="example">
+
+- Dado: $\lambda=18\ \mathrm{solicitudes}\,\mathrm{min}^{-1}$ y $w_{\max}=4\ \mathrm s=\frac{1}{15}\ \mathrm{min}$.
+- Sustitución: $\mu\geq18+15$.
+- Resultado: $\mu\geq33\ \mathrm{solicitudes}\,\mathrm{min}^{-1}$, es decir, un servicio medio de a lo más $60/33=1.818\ \mathrm s$.
+
+</div>
+
+Con $\mu=33\ \mathrm{solicitudes}\,\mathrm{min}^{-1}$, el tiempo medio es exactamente $4\ \mathrm s$. El requisito se aplica a la media: $w_{\max}$ no impide que algunas solicitudes tarden más, solo que el promedio no supere ese valor.
+
+Antes de usar la fórmula, se verifica la estabilidad. En $M/M/1$ debe cumplirse $\lambda<\mu$, aquí $18<33$. Si $\mu\leq\lambda$, la fila crece sin límite y el tiempo medio no es finito. En $M/M/c$, la condición es $\lambda<c\mu$.
+
+---
+
+## Un promedio no es un percentil
+
+Sea $W_{\mathrm{solicitud}}$ el tiempo de respuesta de una solicitud. Un SLA puede exigir un promedio o un percentil, y son exigencias distintas.
+
+<div class="columns">
+<div>
+
+**Promedio**
+
+- Exigencia: $E[W_{\mathrm{solicitud}}]\leq w$.
+- Mide el tiempo típico de una solicitud.
+
+</div>
+<div>
+
+**Percentil $p$**
+
+- Exigencia: $P(W_{\mathrm{solicitud}}\leq w)\geq p$.
+- Mide el tiempo que una fracción $p$ de las solicitudes no excede.
+
+</div>
+</div>
+
+Cumplir el promedio no garantiza cumplir el percentil.
+
+---
+
+## Tiempo de respuesta en $M/M/1$
+
+En $M/M/1$ estable con disciplina FCFS, el tiempo de respuesta $W_{\mathrm{solicitud}}$ es exponencial de tasa $\mu-\lambda$. Por eso:
+
+$$
+E[W_{\mathrm{solicitud}}]=\frac{1}{\mu-\lambda}
+\qquad
+P(W_{\mathrm{solicitud}}>w)=e^{-(\mu-\lambda)w}
+$$
+
+La primera fórmula permite verificar una exigencia sobre el promedio. La segunda, una exigencia sobre un percentil.
+
+---
+
+## Percentil 95 en $M/M/1$
+
+El percentil 95, $w_{95}$, se excede con probabilidad $0.05$.
+
+$$
+e^{-(\mu-\lambda)w_{95}}=0.05
+\quad\Longrightarrow\quad
+w_{95}=\frac{\ln20}{\mu-\lambda}
+$$
+
+<div class="example">
+
+- Dado: $\lambda=18\ \mathrm{min}^{-1}$ y $\mu=24\ \mathrm{min}^{-1}$, así que $\mu-\lambda=6\ \mathrm{min}^{-1}$.
+- Promedio: $\frac{1}{6}\ \mathrm{min}=10\ \mathrm s$.
+- Percentil 95: $\frac{\ln20}{6}\ \mathrm{min}\approx29.96\ \mathrm s$.
+
+</div>
+
+El $5\%$ de las solicitudes tarda más de $29.96\ \mathrm s$, casi el triple del promedio.
+
+---
+
+## Diseño con varios servidores
+
+En $M/M/1$ se despejó $\mu$. En $M/M/c$, $c$ es un número entero, así que se prueban valores crecientes hasta cumplir el requisito:
+
+1. Partir del menor $c$ con $\lambda<c\mu$.
+2. Calcular $C(c,a)$ y $W_q$, y compararlos con el requisito.
+3. Si no se cumple, aumentar $c$. Al final, revisar el costo.
+
+<div class="example">
+
+- Dado: $\lambda=6$ y $\mu=4$ por hora, con $W_q\leq0.1\ \mathrm h$.
+- Con $c=2$: $W_q=0.3214\ \mathrm h$, no cumple. Con $c=3$: $W_q=0.0395\ \mathrm h$, cumple.
+
+</div>
+
+Con $c=2$ el sistema es estable, pero no cumple. La estabilidad no mide la calidad.
+
+---
+
+## Ejercicio: dimensionar un servicio
+
+Una interfaz recibe solicitudes Poisson a tasa $\lambda=18\ \mathrm{min}^{-1}$. Un servidor atiende en tiempo exponencial medio de $2.5\ \mathrm s$.
+
+1. Justifique el modelo.
+2. Calcule $\mu$ y $\rho$.
+3. Determine $L$, $L_q$, $W$ y $W_q$.
+4. Si se exige $W\leq4\ \mathrm s$, ¿cumple?
+5. Indique una limitación del modelo.
+
+---
+
+<!-- _class: compact -->
+
+## Solución del ejercicio
+
+**Modelo.** Llegadas Poisson, un servidor, servicio exponencial y sin rechazos: $M/M/1$.
+
+$$
+\mu=\frac{60}{2.5}=24\ \mathrm{min}^{-1},
+\qquad
+\rho=\frac{18}{24}=0.75
+$$
+
+$$
+L=\frac{18}{24-18}=3,
+\qquad
+L_q=\frac{18^2}{24(24-18)}=2.25
+$$
+
+$$
+W=\frac{1}{24-18}\ \mathrm{min}=10\ \mathrm s,
+\qquad
+W_q=W-\frac{1}{\mu}=7.5\ \mathrm s
+$$
+
+**Objetivo.** No cumple $W\leq4\ \mathrm s$, porque $W=10\ \mathrm s$. Se necesita $\mu\geq18+15=33\ \mathrm{min}^{-1}$.
+
+**Limitación.** El modelo supone servicios exponenciales independientes de la carga.
+
+---
+
+## ¿Por qué estados de capacidad?
+
+Los modelos anteriores suponen capacidad fija. Un servicio real puede estar en estado normal, degradado o de falla, y un solo valor para todo el servicio oculta esos cambios.
+
+Por eso cada estado se trata por separado. Para no confundirlos con el número de solicitudes $n$ de la fila, cada uno necesita una notación propia.
+
+---
+
+## Notación para estados de capacidad
+
+Los subíndices $N$, $D$ y $F$ identifican el estado de capacidad: normal, degradado y de falla. No son el $n$ de $\pi_n$, $\lambda_n$ y $\mu_n$ en la fila.
+
+- $\pi_N$, $\pi_D$, $\pi_F$: probabilidades estacionarias, es decir, la fracción de tiempo en cada estado.
+- $\mu_N$, $\mu_D$, $\mu_F$: tasas de servicio en cada estado.
+- $W_N$, $W_D$: tiempos medios de respuesta. En falla no hay servicio.
+
+---
+
+## Promediar una métrica por estado
+
+Cada estado da una respuesta distinta, y ninguna describe por sí sola lo que recibe el servicio. Por eso cada valor se pondera por la fracción de tiempo que el servicio pasa en su estado.
+
+Para un estado $i$, $\pi_i$ es esa fracción y $r_i$ es la recompensa por unidad de tiempo, es decir, el valor de la métrica en ese estado:
+
+$$
+\overline r=\sum_i\pi_i r_i
+$$
+
+Para medir la fracción de tiempo en que se cumple un objetivo, se asigna $r_i=1$ a los estados que lo cumplen y $r_i=0$ a los demás.
+
+---
+
+## La capacidad depende del estado
+
+<img class="diagram" src="images/capacidad-por-estado.png" alt="La carga llega a tres estados del servicio. El normal tiene probabilidad 0.80 y cumple el SLA. El degradado tiene 0.18 y no lo cumple. El de falla tiene 0.02 y no atiende">
+
+La figura sigue una misma carga, $\lambda=20\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$, por los tres estados. Solo el normal cumple el objetivo: el degradado responde tarde y en falla no se atiende.
+
+La disponibilidad dice cuánto tiempo ocupa cada estado, y las filas, qué experiencia recibe cada solicitud.
+
+---
+
+## Ejemplo: servicio con tres estados
+
+El servicio atiende $50\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$ en estado normal y $25\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$ en degradado. La carga es $20\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$. Los cambios de estado son lentos, así que cada estado operativo es una fila $M/M/1$ en equilibrio, con $W=\frac{1}{\mu-\lambda}$:
+
+$$
+W_N=\frac{1}{50-20}=0.0333\ \mathrm s,
+\qquad W_D=\frac{1}{25-20}=0.2\ \mathrm s
+$$
+
+Los cambios entre estados se modelan con una cadena de Markov de tiempo continuo (CTMC). Su distribución estacionaria, es decir, la fracción de tiempo en cada estado, es:
+
+$$
+(\pi_F,\pi_D,\pi_N)=(0.02,\,0.18,\,0.80)
+$$
+
+---
+
+## Cumplimiento y conectividad
+
+Si el SLA exige un tiempo medio menor que $0.1\ \mathrm s$, solo el estado normal cumple: $W_N=0.0333\ \mathrm s$, $W_D=0.2\ \mathrm s$ y en falla no hay servicio. Con $r_i=1$ en los estados que cumplen y $r_i=0$ en los demás:
+
+$$
+A_{\mathrm{SLA}}=\pi_F\cdot0+\pi_D\cdot0+\pi_N\cdot1=0.80
+$$
+
+La conectividad es la fracción de tiempo en que el servicio responde, en estado normal o degradado:
+
+$$
+\pi_D+\pi_N=0.98
+$$
+
+Miden cosas distintas: el servicio responde casi siempre ($0.98$), pero cumple el SLA solo el $80\%$ del tiempo.
+
+---
+
+## Tiempo medio de respuesta y sus límites
+
+Las solicitudes que llegan en falla se rechazan, así que solo cuentan los estados operativos. Si $\lambda$ no depende del estado, se pondera por $\pi_D$ y $\pi_N$ y se normaliza por $\pi_D+\pi_N$:
+
+$$
+\overline W_{\mathrm{op}}\approx\frac{0.18(0.2)+0.80(0.0333)}{0.98}=0.0639\ \mathrm s
+$$
+
+Es una aproximación: supone que la fila alcanza su equilibrio antes de que cambie la capacidad. No vale si las solicitudes se acumulan entre estados ni si $\mu_D\leq\lambda$, pues entonces el estado degradado no tiene promedio estacionario. Un análisis exacto requiere una cadena conjunta o una simulación.
+
+---
+
+## Ejercicio de diseño: comparar mejoras
+
+Para el servicio de tres estados, compare dos cambios:
+
+1. Mejorar la capacidad degradada de $25$ a $40\ \mathrm{solicitudes}\,\mathrm{s}^{-1}$.
+2. Reducir $\pi_D$ de $0.18$ a $0.08$, aumentando $\pi_N$ de $0.80$ a $0.90$.
+
+Para cada cambio, determine la conectividad, la fracción de tiempo que cumple el SLA y el promedio aproximado de respuesta. Justifique cuál conviene y declare los supuestos.
+
+---
+
+## Ejercicio de diseño: resultados
+
+| Configuración | Conectividad | Fracción que cumple el SLA | $\overline W_{\mathrm{op}}$ |
+|---|---:|---:|---:|
+| original | $0.98$ | $0.80$ | $0.0639\ \mathrm s$ |
+| capacidad degradada de $40$ | $0.98$ | $0.98$ | $0.0364\ \mathrm s$ |
+| menos degradación | $0.98$ | $0.90$ | $0.0469\ \mathrm s$ |
+
+Ambas alternativas mantienen la conectividad. La primera logra el mayor cumplimiento y el menor tiempo medio, porque el estado degradado también cumple $0.1\ \mathrm s$.
+
+La elección necesita además costos y evidencia de que las capacidades propuestas son alcanzables.
+
+---
+
+## Referencias
+
+1. J. F. Shortle, J. M. Thompson, D. Gross y C. M. Harris, *Fundamentals of Queueing Theory*, 5.ª ed., Wiley, 2018, capítulos 1 a 3 y secciones 7.7 y 9.3.
+2. K. S. Trivedi, *Probability and Statistics with Reliability, Queuing, and Computer Science Applications*, 2.ª ed., Wiley, 2002, capítulos 8 y 9.
+3. D. P. Bertsekas y R. G. Gallager, *Data Networks*, 2.ª ed., Prentice Hall, 1992, cap. 3.
+4. J. M. Martínez, *Continuous Time Markov Chains*, material histórico TEL211, páginas 41 a 50.
+5. L. A. Lizama, *Teoría de Colas TEL211*, material histórico USM. Kendall, Little y ejemplo de dimensionamiento del gateway.
