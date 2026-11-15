@@ -38,6 +38,7 @@ reproducibles asociados a las unidades correspondientes.
 | Ayudantía 3 | Diagramas de confiabilidad | [PDF](Ayudantías/03-Diagramas-Confiabilidad/Ayudantia3_TIC.pdf) |
 | Certamen 1 | Preparación, enunciado y solución | [Ejercicios tipo certamen](ejercicios/certamen1/ejercicios.pdf) · [formulario](ejercicios/certamen1/formulario-c1.pdf) · [soluciones](ejercicios/certamen1/soluciones.pdf) · [enunciado](evaluaciones/2026-2/certamenes/certamen1/enunciado/c1.pdf) · [solución](evaluaciones/2026-2/certamenes/certamen1/solucion/c1_sol.pdf) |
 | Certamen 2 | Preparación, enunciado y solución | [Ejercicios tipo certamen](ejercicios/certamen2/ejercicios.pdf) · [formulario](ejercicios/certamen2/formulario-c2.pdf) · [soluciones](ejercicios/certamen2/soluciones.pdf) · [enunciado](evaluaciones/2026-2/certamenes/certamen2/enunciado/c2.pdf) · [solución](evaluaciones/2026-2/certamenes/certamen2/solucion/c2_sol.pdf) |
+| Certamen 3 | Formulario de apoyo | [formulario](ejercicios/certamen3/formulario-c3.pdf) |
 | Tarea 1 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea1/enunciado/tarea1.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea1/enunciado/tarea1_notebook.ipynb) |
 | Tarea 2 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea2/enunciado/tarea2.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea2/enunciado/tarea2_notebook.ipynb) |
 | Tarea 3 | Evaluación del semestre | [Enunciado](evaluaciones/2026-2/tareas/tarea3/enunciado/tarea3.pdf) · [notebook de trabajo](evaluaciones/2026-2/tareas/tarea3/enunciado/tarea3_notebook.ipynb) · [datos](evaluaciones/2026-2/tareas/tarea3/enunciado/datos/) |
@@ -56,6 +57,7 @@ reproducibles asociados a las unidades correspondientes.
 Ayudantías/                            Material de apoyo
 ejercicios/certamen1/                  Ejercicios y material de preparación para el Certamen 1
 ejercicios/certamen2/                  Ejercicios y material de preparación para el Certamen 2
+ejercicios/certamen3/                  Formulario de apoyo para el Certamen 3
 evaluaciones/2026-2/                   Tareas y evaluaciones del semestre
 ```
 
